@@ -1,0 +1,43 @@
+{
+  "name": "graphql-mock",
+  "version": "1.0.0",
+  "description": "GraphQL endpoint mockery library for testing",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
+    "precommit": "lint-staged",
+    "prepush": "npm test",
+    "prepare": "tsc",
+    "test": "jest -c test/jest.config.json"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "tslint --fix",
+      "git add"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/MadRabbit/its-alive.git"
+  },
+  "author": "Nikolay Nemshilov",
+  "license": "MIT",
+  "dependencies": {
+    "nock": "^9.1.6"
+  },
+  "devDependencies": {
+    "@types/jest": "^22.0.1",
+    "graphql": "^0.12.3",
+    "husky": "^0.14.3",
+    "jest": "^22.0.6",
+    "lint-staged": "^6.0.0",
+    "tslint": "^5.9.1",
+    "tslint-config-prettier": "^1.6.0",
+    "tslint-eslint-rules": "^4.1.1",
+    "typescript": "^2.6.2"
+  }
+}

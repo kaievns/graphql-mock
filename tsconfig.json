@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "outDir": "./dist/",
+    "target": "es6",
+    "pretty": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "module": "commonjs",
+    "lib": [
+      "dom",
+      "es5",
+      "es6",
+      "es7"
+    ]
+  },
+  "include": [
+    "./src/**/*"
+  ]
+}
