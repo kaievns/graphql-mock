@@ -1,7 +1,8 @@
+import { render, graphqlMock } from './helper';
 import * as React from 'react';
-import { render } from './helper';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
+
 
 interface Item {
   id: string;

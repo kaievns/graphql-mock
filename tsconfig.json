@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["*"]
+    },
     "outDir": "./dist/",
     "target": "es6",
     "pretty": true,
