@@ -9,6 +9,7 @@
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "module": "commonjs",
+    "jsx": "react",
     "lib": [
       "dom",
       "es5",
