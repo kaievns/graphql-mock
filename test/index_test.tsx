@@ -1,8 +1,7 @@
-import { render, graphqlMock } from './helper';
+import { render, client, graphqlMock } from './helper';
 import * as React from 'react';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-
 
 interface Item {
   id: string;
@@ -33,11 +32,37 @@ const WrappedComponent = graphql<null, null, Props>(query)(
   )
 );
 
-describe('GraphQL wrapped component', () => {
-  it('renders', () => {
-    const wrapper = render(<WrappedComponent />);
-    expect(wrapper.html()).toEqual(
-      ``
-    );
+describe('graphqlMock', () => {
+  beforeEach(() => graphqlMock.reset());
+
+  describe('#requests', () => {
+    it('has an empty list by default', () => {
+      expect(graphqlMock.requests).toEqual([]);
+    });
+
+    it('records the requests', () => {
+      render(<WrappedComponent />).html();
+
+      expect(graphqlMock.requests).toEqual([
+        {
+          variables: undefined,
+          query: 'query GetItems {\n  items {\n    id\n    name\n  }\n}'
+        }
+      ]);
+    });
+  });
+
+  describe('#queries', () => {
+    it('has an empty list by default', () => {
+      expect(graphqlMock.queries).toEqual([]);
+    });
+
+    it('records all the queries', () => {
+      render(<WrappedComponent />).html();
+
+      expect(graphqlMock.queries).toEqual([
+        'query GetItems {\n  items {\n    id\n    name\n  }\n}'
+      ]);
+    });
   });
 });
