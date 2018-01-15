@@ -51,9 +51,18 @@ describe('graphqlMock', () => {
       expect(graphqlMock.requests).toEqual([
         {
           variables: undefined,
-          query: 'query GetItems {\n  items {\n    id\n    name\n  }\n}'
+          query: 'query GetItems {\n  items {\n    id\n    name\n  }\n}\n'
         }
       ]);
+    });
+
+    it('returns the last request', () => {
+      render(<WrappedComponent />);
+
+      expect(graphqlMock.lastRequest).toEqual({
+        variables: undefined,
+        query: 'query GetItems {\n  items {\n    id\n    name\n  }\n}\n'
+      });
     });
   });
 
@@ -63,11 +72,19 @@ describe('graphqlMock', () => {
     });
 
     it('records all the queries', () => {
-      render(<WrappedComponent />).html();
+      render(<WrappedComponent />);
 
       expect(graphqlMock.queries).toEqual([
-        'query GetItems {\n  items {\n    id\n    name\n  }\n}'
+        'query GetItems {\n  items {\n    id\n    name\n  }\n}\n'
       ]);
+    });
+
+    it('allows access to the last query', () => {
+      render(<WrappedComponent />);
+
+      expect(graphqlMock.lastQuery).toEqual(
+        'query GetItems {\n  items {\n    id\n    name\n  }\n}\n'
+      );
     });
   });
 });

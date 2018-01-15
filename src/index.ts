@@ -1,7 +1,7 @@
 import { ApolloClient } from 'apollo-client';
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import MockClient from './client';
-import { stringify } from './utils';
+import { stringify, fillIn } from './utils';
 
 export * from './utils';
 
@@ -27,13 +27,27 @@ export default class GraphQLMock {
     return this.requests.map(({ query }) => query);
   }
 
+  get lastRequest(): GQLRequest | void {
+    return this.requests[this.requests.length - 1];
+  }
+
+  get lastQuery(): string | void {
+    const request = this.lastRequest;
+
+    if (request) {
+      const { query, variables = {} } = request;
+      return fillIn(query, variables);
+    }
+  }
+
   private patchClient() {
     ['query', 'watchQuery', 'mutate'].forEach(name => {
       const original = (this.client as any)[name];
       (this.client as any)[name] = ({ query, variables, ...rest }: any) => {
-        if (query) { this.requests.push({
-          query: stringify(query), variables
-        });
+        if (query) { 
+          this.requests.push({
+            query: stringify(query), variables
+          });
         }
 
         return original.call(this, { query, variables, ...rest });
