@@ -3,7 +3,10 @@ import * as printer from 'graphql/language/printer';
 
 export const parse = parser.parse;
 export const stringify = printer.print;
-export const normalize = (query: string) => stringify(parse(query));
+export const normalize = (query: string | object) => {
+  const queryObject = typeof(query) === 'string' ? parse(query) : query);
+  return stringify(queryObject);
+};
 
 // TODO: make a more serious implementation of this
 export const fillIn = (query: string, variables: any = {}) => {

@@ -35,9 +35,21 @@ const WrappedComponent = graphql<null, null, Props>(query)(
 describe('graphqlMock', () => {
   beforeEach(() => graphqlMock.reset());
 
-  it('allows to render', () => {
+  it('allows an unmocked render', () => {
     const wrapper = render(<WrappedComponent />);
     expect(wrapper.html()).toEqual('<ul></ul>');
+  });
+
+  it('allows to stub the returned data', () => {
+    graphqlMock.expect(query).reply({
+      items: [
+        { id: '1', name: 'one' },
+        { id: '2', name: 'two' }
+      ]
+    });
+
+    const wrapper = render(<WrappedComponent />);
+    expect(wrapper.html()).toEqual('<ul><li>one</li><li>two</li></ul>');
   });
 
   describe('#requests', () => {

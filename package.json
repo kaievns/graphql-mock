@@ -8,10 +8,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "build": "rm -rf dist && tsc",
     "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
     "precommit": "lint-staged",
     "prepush": "npm test",
-    "prepare": "rm -rf dist && tsc",
+    "prepare": "npm build",
     "test": "jest -c test/jest.config.json"
   },
   "lint-staged": {
