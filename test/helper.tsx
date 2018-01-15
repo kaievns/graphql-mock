@@ -10,19 +10,7 @@ import * as Adapter from 'enzyme-adapter-react-16';
 
 Enzyme.configure({ adapter: new Adapter() });
 
-const uri = 'https://api.example.com/graphql';
-
-export const client = new ApolloClient({
-  link: new HttpLink({ uri, fetch }),
-  cache: new InMemoryCache()
-});
-
-export const render = (element: JSX.Element) =>
-  mount(
-    <ApolloProvider client={client}>
-      {element}
-    </ApolloProvider>
-  );
+import GraphQLMock from '../src';
 
 const schema = `
   type Item {
@@ -35,8 +23,12 @@ const schema = `
   }
 `;
 
-import GraphQLMock from '../src';
+export const graphqlMock = new GraphQLMock(schema);
 
-export const graphqlMock = new GraphQLMock({
-  uri, schema, client
-});
+export const render = (element: JSX.Element) =>
+  mount(
+    <ApolloProvider client={graphqlMock.client}>
+      {element}
+    </ApolloProvider>
+  );
+
