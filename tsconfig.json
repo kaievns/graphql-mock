@@ -17,7 +17,8 @@
       "dom",
       "es5",
       "es6",
-      "es7"
+      "es7",
+      "esnext.asynciterable"
     ]
   },
   "include": [
