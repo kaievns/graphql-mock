@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/MadRabbit/its-alive.git"
+    "url": "git+ssh://git@github.com/MadRabbit/graphql-mock.git"
   },
   "author": "Nikolay Nemshilov",
   "license": "MIT",
