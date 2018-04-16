@@ -56,9 +56,11 @@ export default class GraphQLMock {
         if (query) { 
           this.requests.push({ query: stringify(query), variables });
           const mockedResponse = this.expectations.forQuery(query);
-
+          
           if (mockedResponse) {
-            response.currentResult = () => ({ data: mockedResponse });
+            response.currentResult = () => ({
+              ...mockedResponse, loading: false
+            });
           }
         }
 

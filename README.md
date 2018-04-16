@@ -61,7 +61,7 @@ it('shoulda render alright', () => {
       { id: '1', name: 'one' },
       { id: '2', name: 'two' }
     ]
-  })
+  });
 
   const wrapper = mount(
     <ApolloProvider client={graphqlMock.client}>
@@ -73,6 +73,20 @@ it('shoulda render alright', () => {
   expect(graphqlMock.lastQuery).toEqual(normalize(query));
 });
 ```
+
+## Testing Error States
+
+you can test failure states by using the `expect` + `fail` combo. here are some examples
+
+```js
+  graqhqlMock.expect(query).fail('everything is terrible');
+  graqhqlMock.expect(query).fail([
+    { mesage: 'everything is terrible' },
+    // ...
+  ]);
+  graqhqlMock.expect(query).fail(new ApolloError({ .... }));
+```
+
 
 ## API & Stuff
 

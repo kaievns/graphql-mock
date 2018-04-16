@@ -1,6 +1,7 @@
 import { render, graphqlMock } from './helper';
 import * as React from 'react';
 import { graphql } from 'react-apollo';
+import { ApolloError } from 'apollo-client';
 import gql from 'graphql-tag';
 
 interface Item {
@@ -12,6 +13,7 @@ interface Props {
   data: {
     loading: boolean
     items?: Item[]
+    error?: ApolloError
   };
 }
 
@@ -25,11 +27,17 @@ const query = gql`
 `;
 
 const WrappedComponent = graphql<null, null, Props>(query)(
-  ({ data: { items = [] } }: Props) => (
-    <ul>
-      {items.map(item => <li key={item.id} >{item.name}</li>)}
-    </ul>
-  )
+  ({ data: { items = [], error }: Props) => {
+    if (error) {
+      return <div>{error.message}</div>;
+    }
+
+    return (
+      <ul>
+        {items.map(item => <li key={item.id} >{item.name}</li>)}
+      </ul>
+    );
+  }
 );
 
 describe('graphqlMock', () => {
@@ -50,6 +58,15 @@ describe('graphqlMock', () => {
 
     const wrapper = render(<WrappedComponent />);
     expect(wrapper.html()).toEqual('<ul><li>one</li><li>two</li></ul>');
+  });
+
+  it('allows to test failure states', () => {
+    graphqlMock.expect(query).fail({
+      message: 'everything is terrible'
+    });
+
+    const wrapper = render(<WrappedComponent />);
+    expect(wrapper.html()).toEqual('<div>GraphQL error: everything is terrible</div>');
   });
 
   describe('#requests', () => {

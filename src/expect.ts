@@ -1,9 +1,11 @@
+import { ApolloError } from 'apollo-client';
 import { normalize } from './utils';
 
 export interface Mock {
   query: string;
   count: number;
   data?: any;
+  error?: any;
 }
 
 export default class Expectations {
@@ -31,10 +33,22 @@ export default class Expectations {
     return this;
   }
 
+  public fail(error: any | any[] | string) {
+    const lastEntry = this.mocks[this.mocks.length - 1];
+    const errors = typeof error === 'string' ? [{ message: error }] : error;
+
+    lastEntry.data = {};
+    lastEntry.error = error instanceof ApolloError ? error : new ApolloError({
+      graphQLErrors: Array.isArray(errors) ? errors : [errors]
+    });
+
+    return this;
+  }
+
   public forQuery(query: string): any | void {
     const normalizedQuery = normalize(query);
     const entry = this.mocks.find(({ query }) => query === normalizedQuery);
 
-    return entry ? entry.data : undefined;
+    return entry ? { data: entry.data, error: entry.error, networkStatus: entry.error ? 'error' : 'ready' } : undefined;
   }
 }
