@@ -1,6 +1,6 @@
 {
   "name": "graphql-mock",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "GraphQL endpoint mockery library for testing",
   "files": [
     "dist"
