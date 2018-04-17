@@ -29,11 +29,17 @@ const schema = `
   }
 `;
 
+// optional mocks
 const mocks = {
   ... // your regular apollo mocks
 };
 
-export default new GraphQLMock(schema, mocks);
+// optional resolvers
+const resolvers = {
+  ... // graphql resolvers
+};
+
+export default new GraphQLMock(schema, mocks, resolvers);
 ```
 
 Then use like so in your enzyme tests:
@@ -87,6 +93,22 @@ you can test failure states by using the `expect` + `fail` combo. here are some 
   graqhqlMock.expect(query).fail(new ApolloError({ .... }));
 ```
 
+## Using Existing Schema
+
+If you have your own schema, for example to use custom resolvers, you pass a schema
+instance into the `GraphqlMock` constructor:
+
+```js
+const typeDefs = `
+`;
+
+const resolvers = {
+  // ...
+};
+
+const schema = makeExecutableSchema({ typeDefs });
+const mock = new GraphqlMock(schema);
+```
 
 ## API & Stuff
 
