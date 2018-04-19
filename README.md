@@ -110,6 +110,18 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 const mock = new GraphqlMock(schema);
 ```
 
+## Using Existing ApolloClient
+
+If you have your own flavour configured ApolloClient already setup and ready to go,
+you can use it instead of a schema:
+
+```
+const mock = new GraphqlMock(myOwnClient);
+```
+
+__NOTE__: this is not going to work with url linked clients
+
+
 ## API & Stuff
 
 `#client` -> a reference to the underline ApolloClient instance

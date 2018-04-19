@@ -1,5 +1,4 @@
 import { ApolloClient } from 'apollo-client';
-import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import MockClient from './client';
 import Expectations from './expect';
 import { stringify, fillIn } from './utils';
@@ -13,12 +12,12 @@ export interface GQLRequest {
 }
 
 export default class GraphQLMock {
-  public client: ApolloClient<NormalizedCacheObject>;
+  public client: ApolloClient<any>;
   public requests: GQLRequest[] = [];
   public expectations = new Expectations();
 
-  constructor(schema: string | GraphQLSchema, mocks: object = {}, resolvers?: any) {
-    this.client = MockClient(schema, mocks, resolvers);
+  constructor(schema: string | GraphQLSchema | ApolloClient<any>, mocks: object = {}, resolvers?: any) {
+    this.client = schema instanceof ApolloClient ? schema : MockClient(schema, mocks, resolvers);
     this.patchClient();
   }
 
