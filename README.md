@@ -115,7 +115,7 @@ const mock = new GraphqlMock(schema);
 If you have your own flavour configured ApolloClient already setup and ready to go,
 you can use it instead of a schema:
 
-```
+```js
 const mock = new GraphqlMock(myOwnClient);
 ```
 
