@@ -106,7 +106,7 @@ const resolvers = {
   // ...
 };
 
-const schema = makeExecutableSchema({ typeDefs });
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 const mock = new GraphqlMock(schema);
 ```
 
