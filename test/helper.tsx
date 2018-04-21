@@ -21,6 +21,10 @@ const schema = `
   type Query {
     items: [Item]
   }
+
+  type Mutation {
+    createItem(name: String!): Item
+  }
 `;
 
 export const graphqlMock = new GraphQLMock(schema);

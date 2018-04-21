@@ -13,7 +13,7 @@ export const fillIn = (query: string, variables: any = {}) => {
   let fullQuery = `${query}`;
 
   Object.keys(variables).forEach(key => {
-    fullQuery = fullQuery.replace(`$${key}`, JSON.stringify(variables[key]));
+    fullQuery = fullQuery.replace(`: $${key}`, `: ${JSON.stringify(variables[key])}`);
   });
 
   return fullQuery;

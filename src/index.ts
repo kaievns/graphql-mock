@@ -8,7 +8,8 @@ export * from './utils';
 
 export interface GQLRequest {
   variables: any;
-  query: string;
+  query?: string;
+  mutation?: string;
 }
 
 export default class GraphQLMock {
@@ -27,7 +28,11 @@ export default class GraphQLMock {
   }
 
   get queries(): string[] {
-    return this.requests.map(({ query }) => query);
+    return this.requests.filter(({ query }) => !!query).map(({ query, variables }) => fillIn(query, variables));
+  }
+
+  get mutations(): string[] {
+    return this.requests.filter(({ mutation }) => !!mutation).map(({ mutation, variables }) => fillIn(mutation, variables));
   }
 
   get lastRequest(): GQLRequest | void {
@@ -35,12 +40,13 @@ export default class GraphQLMock {
   }
 
   get lastQuery(): string | void {
-    const request = this.lastRequest;
+    const queries = this.queries;
+    return queries[queries.length - 1];
+  }
 
-    if (request) {
-      const { query, variables = {} } = request;
-      return fillIn(query, variables);
-    }
+  get lastMutation(): string | void {
+    const mutations = this.mutations;
+    return mutations[mutations.length - 1];
   }
 
   public expect(query: string) {
@@ -50,21 +56,26 @@ export default class GraphQLMock {
   private patchClient() {
     ['query', 'watchQuery', 'mutate'].forEach(name => {
       const original = (this.client as any)[name];
-      (this.client as any)[name] = ({ query, variables, ...rest }: any) => {
-        const response = original.call(this, { query, variables, ...rest });
+      (this.client as any)[name] = ({ query, mutation, variables, ...rest }: any) => {
+        const queryKey = name === 'mutate' ? 'mutation' : 'query';
+        const queryParams = { [queryKey]: name === 'mutate' ? mutation : query, variables };
+        const observableQuery = original.call(this, { ...queryParams, ...rest });
+        
+        const mockedResponse = this.expectations.forQuery(queryParams[queryKey]);
 
-        if (query) { 
-          this.requests.push({ query: stringify(query), variables });
-          const mockedResponse = this.expectations.forQuery(query);
+        this.requests.push({ [queryKey]: stringify(queryParams[queryKey]), variables });
 
-          if (mockedResponse) {
-            response.currentResult = () => ({
-              loading: false, ...mockedResponse
-            });
+        if (mockedResponse) {
+          const response = { loading: false, ...mockedResponse };
+
+          if (observableQuery instanceof Promise) {
+            return Promise.resolve(response);
+          } else {
+            observableQuery.currentResult = () => response;
           }
         }
 
-        return response;
+        return observableQuery;
       };
     });
   }
