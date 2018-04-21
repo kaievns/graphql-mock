@@ -59,7 +59,7 @@ export default class GraphQLMock {
 
           if (mockedResponse) {
             response.currentResult = () => ({
-              ...mockedResponse, loading: false
+              loading: false, ...mockedResponse
             });
           }
         }

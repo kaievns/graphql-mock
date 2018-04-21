@@ -28,9 +28,8 @@ const query = gql`
 `;
 
 const Dummy = ({ items, error, loading }: any) => {
-  if (error) {
-    return <div>{error.message}</div>;
-  }
+  if (loading) { return <div>Loading...</div>; }
+  if (error) { return <div>{error.message}</div>; }
 
   return (
     <ul>
@@ -48,11 +47,6 @@ describe('graphqlMock', () => {
   beforeEach(() => graphqlMock.reset());
 
   describe('with a decorated component', () => {
-    it('allows an unmocked render', () => {
-      const wrapper = render(<WrappedComponent />);
-      expect(wrapper.html()).toEqual('<ul></ul>');
-    });
-
     it('allows to stub the returned data', () => {
       graphqlMock.expect(query).reply({
         items: [
@@ -72,6 +66,13 @@ describe('graphqlMock', () => {
 
       const wrapper = render(<WrappedComponent />);
       expect(wrapper.html()).toEqual('<div>GraphQL error: everything is terrible</div>');
+    });
+
+    it('allows to test loading states', () => {
+      graphqlMock.expect(query).loading();
+
+      const wrapper = render(<WrappedComponent />);
+      expect(wrapper.html()).toEqual('<div>Loading...</div>');
     });
   });
 
@@ -98,6 +99,13 @@ describe('graphqlMock', () => {
       graphqlMock.expect(query).fail('everything is terrible');
 
       expect(render(<QueryComponent />).html()).toEqual('<div>GraphQL error: everything is terrible</div>');
+    });
+
+    it('allows to test loading states', () => {
+      graphqlMock.expect(query).loading();
+
+      const wrapper = render(<QueryComponent />);
+      expect(wrapper.html()).toEqual('<div>Loading...</div>');
     });
   });
 
