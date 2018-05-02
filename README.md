@@ -10,7 +10,7 @@ sent, and mock responses.
 ## Installation & Usage
 
 ```
-npm add -D graphq-mock
+npm add -D graphql-mock
 ```
 
 thow this somewhere in your testing environment setup
