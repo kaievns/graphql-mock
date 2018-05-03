@@ -13,16 +13,16 @@ export interface GQLRequest {
 }
 
 export default class GraphQLMock {
-  public client: ApolloClient<any>;
-  public requests: GQLRequest[] = [];
-  public expectations = new Expectations();
+  client: ApolloClient<any>;
+  requests: GQLRequest[] = [];
+  expectations = new Expectations();
 
   constructor(schema: string | GraphQLSchema | ApolloClient<any>, mocks: object = {}, resolvers?: any) {
     this.client = schema instanceof ApolloClient ? schema : MockClient(schema, mocks, resolvers);
     this.patchClient();
   }
 
-  public reset() {
+  reset() {
     this.requests = [];
     this.expectations.reset();
   }
@@ -49,7 +49,7 @@ export default class GraphQLMock {
     return mutations[mutations.length - 1];
   }
 
-  public expect(query: string) {
+  expect(query: string) {
     return this.expectations.expect(query);
   }
 

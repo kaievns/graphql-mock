@@ -10,31 +10,31 @@ export interface Mock {
 }
 
 export default class Expectations {
-  public mocks: Mock[] = [];
+  mocks: Mock[] = [];
 
-  public reset() {
+  reset() {
     this.mocks = [];
   }
 
-  public expect(query: string, count = 1) {
+  expect(query: string, count = 1) {
     this.mocks.push({ query: normalize(query), count, data: {}, loading: false });
     return this;
   }
 
-  public times(count: number) {
+  times(count: number) {
     const lastEntry = this.mocks[this.mocks.length - 1];
     lastEntry.count = count;
     return this;
   } 
 
-  public reply(data: any) {
+  reply(data: any) {
     // TODO: add the mock time schema validation for the mock data
     const lastEntry = this.mocks[this.mocks.length - 1];
     lastEntry.data = data;
     return this;
   }
 
-  public fail(error: any | any[] | string) {
+  fail(error: any | any[] | string) {
     const lastEntry = this.mocks[this.mocks.length - 1];
     const errors = typeof error === 'string' ? [{ message: error }] : error;
 
@@ -45,13 +45,13 @@ export default class Expectations {
     return this;
   }
 
-  public loading(value = true) {
+  loading(value = true) {
     const lastEntry = this.mocks[this.mocks.length - 1];
     lastEntry.loading = value;
     return this;
   }
 
-  public forQuery(query: string): any | void {
+  forQuery(query: string): any | void {
     const normalizedQuery = normalize(query);
     const entry = this.mocks.find(({ query }) => query === normalizedQuery);
     const { data, error, loading } = entry || {} as Mock;
