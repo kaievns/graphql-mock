@@ -43,7 +43,7 @@ const WrappedComponent = graphql<null, null, Props>(query)(
     <Dummy items={items} error={error} loading={loading} />
 );
 
-describe('graphqlMock', () => {
+describe.skip('graphqlMock', () => {
   beforeEach(() => graphqlMock.reset());
 
   describe('with a decorated component', () => {

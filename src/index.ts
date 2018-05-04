@@ -1,20 +1,17 @@
 import MockClient from './client';
 import Expectations from './expect';
-import { stringify, fillIn } from './utils';
+import History, { Request } from './history';
 import { GraphQLSchema } from 'graphql';
 
 export * from './utils';
+export { Request } from './history';
 
-export interface GQLRequest {
-  variables: any;
-  query?: string;
-  mutation?: string;
-}
 
 export default class GraphQLMock {
   client: MockClient;
-  requests: GQLRequest[] = [];
+  history = new History();
   expectations = new Expectations();
+  
 
   constructor(schema: string | GraphQLSchema, mocks: object = {}, resolvers?: any) {
     this.client = new MockClient(schema, mocks, resolvers);
@@ -22,30 +19,8 @@ export default class GraphQLMock {
   }
 
   reset() {
-    this.requests = [];
+    this.history.reset();
     this.expectations.reset();
-  }
-
-  get queries(): string[] {
-    return this.requests.filter(({ query }) => !!query).map(({ query, variables }) => fillIn(query, variables));
-  }
-
-  get mutations(): string[] {
-    return this.requests.filter(({ mutation }) => !!mutation).map(({ mutation, variables }) => fillIn(mutation, variables));
-  }
-
-  get lastRequest(): GQLRequest | void {
-    return this.requests[this.requests.length - 1];
-  }
-
-  get lastQuery(): string | void {
-    const queries = this.queries;
-    return queries[queries.length - 1];
-  }
-
-  get lastMutation(): string | void {
-    const mutations = this.mutations;
-    return mutations[mutations.length - 1];
   }
 
   expect(query: string) {
@@ -56,7 +31,7 @@ export default class GraphQLMock {
     const queryKey = mutation ? 'mutation' : 'query';
     const queryParams = { [queryKey]: name === 'mutate' ? mutation : query, variables };
 
-    this.requests.push({ [queryKey]: stringify(queryParams[queryKey]), variables });
+    this.history.register({ query, mutation, variables });
 
     return this.expectations.forQuery(queryParams[queryKey]);
   }
