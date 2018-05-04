@@ -18,3 +18,8 @@ export const fillIn = (query: string, variables: any = {}) => {
 
   return fullQuery;
 };
+
+// TODO make this better
+export const deepEqual = (one: any, another: any) => {
+  return JSON.stringify(one) === JSON.stringify(another);
+};

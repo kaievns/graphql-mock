@@ -13,7 +13,7 @@
     "precommit": "lint-staged",
     "prepush": "npm test",
     "prepare": "npm build",
-    "test": "jest -c test/jest.config.json"
+    "test": "jest"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -55,5 +55,18 @@
     "tslint-config-prettier": "^1.12.0",
     "tslint-eslint-rules": "^5.1.0",
     "typescript": "^2.8.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "./test/preprocessor.js"
+    },
+    "testMatch": [
+      "<rootDir>/test/**/*_test.(ts|tsx)"
+    ]
   }
 }
