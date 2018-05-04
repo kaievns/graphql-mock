@@ -1,4 +1,3 @@
-import { ApolloClient } from 'apollo-client';
 import MockClient from './client';
 import Expectations from './expect';
 import { stringify, fillIn } from './utils';
@@ -13,13 +12,13 @@ export interface GQLRequest {
 }
 
 export default class GraphQLMock {
-  client: ApolloClient<any>;
+  client: MockClient;
   requests: GQLRequest[] = [];
   expectations = new Expectations();
 
-  constructor(schema: string | GraphQLSchema | ApolloClient<any>, mocks: object = {}, resolvers?: any) {
-    this.client = schema instanceof ApolloClient ? schema : MockClient(schema, mocks, resolvers);
-    this.patchClient();
+  constructor(schema: string | GraphQLSchema, mocks: object = {}, resolvers?: any) {
+    this.client = new MockClient(schema, mocks, resolvers);
+    this.client.notify(this.registerRequest);
   }
 
   reset() {
@@ -53,30 +52,12 @@ export default class GraphQLMock {
     return this.expectations.expect(query);
   }
 
-  private patchClient() {
-    ['query', 'watchQuery', 'mutate'].forEach(name => {
-      const original = (this.client as any)[name];
-      (this.client as any)[name] = ({ query, mutation, variables, ...rest }: any) => {
-        const queryKey = name === 'mutate' ? 'mutation' : 'query';
-        const queryParams = { [queryKey]: name === 'mutate' ? mutation : query, variables };
-        const observableQuery = original.call(this, { ...queryParams, ...rest });
-        
-        const mockedResponse = this.expectations.forQuery(queryParams[queryKey]);
+  private registerRequest = ({ query, mutation, variables }: any) => {
+    const queryKey = mutation ? 'mutation' : 'query';
+    const queryParams = { [queryKey]: name === 'mutate' ? mutation : query, variables };
 
-        this.requests.push({ [queryKey]: stringify(queryParams[queryKey]), variables });
+    this.requests.push({ [queryKey]: stringify(queryParams[queryKey]), variables });
 
-        if (mockedResponse) {
-          const response = { loading: false, ...mockedResponse };
-
-          if (observableQuery instanceof Promise) {
-            return Promise.resolve(response);
-          } else {
-            observableQuery.currentResult = () => response;
-          }
-        }
-
-        return observableQuery;
-      };
-    });
+    return this.expectations.forQuery(queryParams[queryKey]);
   }
 }

@@ -29,6 +29,7 @@
   "license": "MIT",
   "dependencies": {
     "apollo-link-schema": "^1.1.0",
+    "fast-deep-equal": "^2.0.1",
     "graphql-tools": "^3.0.0"
   },
   "devDependencies": {

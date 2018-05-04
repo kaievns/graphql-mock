@@ -1,5 +1,6 @@
 import * as parser from 'graphql/language/parser';
 import * as printer from 'graphql/language/printer';
+import * as fastDeepEqual from 'fast-deep-equal';
 
 export const parse = parser.parse;
 export const stringify = printer.print;
@@ -19,7 +20,4 @@ export const fillIn = (query: string, variables: any = {}) => {
   return fullQuery;
 };
 
-// TODO make this better
-export const deepEqual = (one: any, another: any) => {
-  return JSON.stringify(one) === JSON.stringify(another);
-};
+export const deepEqual = fastDeepEqual;
