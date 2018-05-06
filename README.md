@@ -1,13 +1,16 @@
 # GraphQL Client Side Mocking
 
-This is a little library that helps with the apollo graphql projects testing.
-Essentially it's a wrapper over the `SchemaLink` to make it a bit more useful
-in a React app testing schenario.
+This is a library that helps with the apollo graphql projects testing. Comparing
+to a vanilla apollo testing setup this enables the following:
 
-At the basic level it adds two things: an option to check which queries were
-sent, and mock responses.
+* to specify an exact response data
+* test failure states
+* test loading states
+* assert which exact quieries and mutations sent by your code
+* assert exact variables that sent along with queries/mutations
 
-## Installation & Usage
+
+## Installation & Setup
 
 ```
 npm add -D graphql-mock
@@ -42,84 +45,157 @@ const resolvers = {
 export default new GraphQLMock(schema, mocks, resolvers);
 ```
 
-Then use like so in your enzyme tests:
+If you already have an executable schema, you can pass it as is into the constructor:
+
+```js
+export default new GraphQLMock(myExecutableSchema);
+```
+
+## Testing Queries
+
+Lets assume you have a TodoList component that fires a graphql query to fetch the list
+from an API end point. Something like this:
+
+```js
+const query = gql`
+  query GetItems {
+    items {
+      id
+      name
+    }
+  }
+`;
+
+const TodoList = () =>
+  <Query query={query}>
+    {({ data: { items = [] } = {}, error, loading }: any) =>
+      if (loading) { return <div>Loading...</div>; }
+      if (error) { return <div>{error.message}</div>; }
+
+      return (
+        <ul>
+          {items.map(item => <li key={item.id} >{item.name}</li>)}
+        </ul>
+      );
+    }
+  </Query>;
+```
+
+Here is how you can test it with enzyme and graphql-mock:
 
 ```js
 import { mount } from 'enzyme';
 import { ApolloProvider } from 'react-apollo';
-import { normalize } from 'graphql-mock';
 import graphqlMock from './graphql';
 
-import TodoList from 'src/my/component';
+const render = () => 
+  <ApolloProvider client={graphqlMock.client}>
+    <TodoList />
+  </ApolloProvider>;
 
-it('shoulda render alright', () => {
-  const query = `
-    query GetItems {
-      items {
-        id
-        name
-      }
-    }
-  `;
+describe('TodoList', () => {
+  it('renders todo items good', () => {
+    graqhqlMock.expect(query).reply({ // <- query from the above code
+      items: [
+        { id: '1', name: 'one' },
+        { id: '2', name: 'two' }
+      ]
+    });
 
-  graqhqlMock.expect(query).reply({
-    items: [
-      { id: '1', name: 'one' },
-      { id: '2', name: 'two' }
-    ]
+    expect(render().html()).toEqual('<ul><li>one</li><li>two</li></ul>');
   });
 
-  const wrapper = mount(
-    <ApolloProvider client={graphqlMock.client}>
-      <TodoList />
-    </ApolloProvider>
-  );
+  it('renders loading state too', () => {
+    graphqlMock.expect(query).loading(true);
 
-  expect(wrapper.html()).toEqual('<ul><li>one</li><li>two</li></ul>');
-  expect(graphqlMock.lastQuery).toEqual(normalize(query));
+    expect(render().html()).toEqual('<div>Loading...</div>');
+  });
+
+  it('renders errors when API fails', () => {
+    graphqlMock.expect(query).fails('everything is terrible');
+
+    expect(render().html()).toEqual('<div>everything is terrible</div>');
+  })
 });
 ```
 
-## Testing Error States
+The query can be either a `GraphQLQuery` object, or a string, or an applo style
+`{ query, variables }` object. __NOTE__: if you specify expected variables, the
+mock will trigger to that specific query + variables combination only!
 
-you can test failure states by using the `expect` + `fail` combo. here are some examples
+## Testing Mutations
 
-```js
-  graqhqlMock.expect(query).fail('everything is terrible');
-  graqhqlMock.expect(query).fail([
-    { mesage: 'everything is terrible' },
-    // ...
-  ]);
-  graqhqlMock.expect(query).fail(new ApolloError({ .... }));
-```
-
-## Using Existing Schema
-
-If you have your own schema, for example to use custom resolvers, you pass a schema
-instance into the `GraphqlMock` constructor:
+Now lets pretend you have a componet that creates new TODO items:
 
 ```js
-const typeDefs = `
+const mutation = gql`
+  mutation GetItems($name: String!) {
+    createItem(name: $name) {
+      id
+      name
+    }
+  }
 `;
 
-const resolvers = {
-  // ...
-};
+const CreatorComponent = () =>
+  <Mutation mutation={mutation} onError={noop}>
+    {(createItem, { data, loading, error }: any) => {
+      if (loading) { return <div>Loading...</div>; }
+      if (error) { return <div>{error.message}</div>; }
+      if (data) { return <div id={data.createItem.id}>{data.createItem.name}</div>; }
 
-const schema = makeExecutableSchema({ typeDefs, resolvers });
-const mock = new GraphqlMock(schema);
+      const onClick = () => createItem({ variables: { name: 'new item' } });
+
+      return <button onClick={onClick}>click me</button>;
+    }}
+  </Mutation>;
 ```
 
-## Using Existing ApolloClient
-
-If you have your own flavour configured ApolloClient already setup and ready to go,
-you can use it instead of a schema:
+Now here how you can test this component through and through with graphql-mock:
 
 ```js
-const mock = new GraphqlMock(myOwnClient);
-```
+const render = () => 
+  <ApolloProvider client={graphqlMock.client}>
+    <CreatorComponent />
+  </ApolloProvider>;
 
-__NOTE__: this is not going to work with url linked clients
+describe('CreatorComponent', () => {
+  it('renders good by default', () => {
+    expect(render().html()).toEqual('<button>click me</button>');
+  });
+
+  it('sends mutations and renders responses', () => {
+    graphqlMock.expect(mutation).reply({
+      createItem: { id: 1, name: 'new item' }
+    });
+
+    const wrapper = render();
+    wrapper.find('button').simulate('click');
+
+    expect(wrapper.html()).toEqual('<div id="id">new item</div>');
+  });
+
+  it('sends correct variables with the request', () => {
+    const mock = graphqlMock.expect(mutation).reply({
+      createItem: { id: 1, name: 'new item' }
+    });
+
+    const wrapper = render();
+    wrapper.find('button').simulate('click');
+
+    expect(mock.calls[0]).toEqual([{ name: 'new item' }]);
+  });
+
+  it('can take a failure and live another day', () => {
+    graphqlMock.expect(mutation).fail('everything is terrible');
+
+    const wrapper = render();
+    wrapper.find('button').simulate('click');
+
+    expect(wrapper.html()).toEqual('<div>everything is terrible</div>');
+  });
+});
+```
 
 
 ## API & Stuff
@@ -128,25 +204,9 @@ __NOTE__: this is not going to work with url linked clients
 
 `#reset()` -> to reset all the mocks and queries history
 
-`#queries` -> the list of (string and normalized) queries that sent to the endpoint
+`#history` -> the log of all queries and mutations along with variables
 
-`#lastQuery` -> returns the last query that sent
-
-`#requests` -> requests (queries + variables) that sent to the server
-
-`#lastRequest` -> return the last request that sent
-
-`#expect(query: string)` -> an API to mock the exact responses
-
-also some helper functions:
-
-```js
-import { parse, stringify, normalize } from 'graphql-mock';
-
-parse(query) // turns a string query into an object
-stringify(query) // turns an object into a standardly formatted string query
-normalize(query) // turns an object or string query into a standard formatted string query
-```
+`#allowUnmockedRequests(state)` -> switch on/off an option to allow unmocked queries to fall through
 
 ## Copyright & License
 
