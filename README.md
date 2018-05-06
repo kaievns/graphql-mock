@@ -3,7 +3,7 @@
 This is a library that helps with the apollo graphql projects testing. Comparing
 to a vanilla apollo testing setup this enables the following:
 
-* to specify an exact response data
+* specify an exact response data
 * test failure states
 * test loading states
 * assert which exact quieries and mutations sent by your code
@@ -69,8 +69,8 @@ const query = gql`
 const TodoList = () =>
   <Query query={query}>
     {({ data: { items = [] } = {}, error, loading }: any) =>
-      if (loading) { return <div>Loading...</div>; }
-      if (error) { return <div>{error.message}</div>; }
+      if (loading) return <div>Loading...</div>;
+      if (error) return <div>{error.message}</div>;
 
       return (
         <ul>
@@ -88,14 +88,15 @@ import { mount } from 'enzyme';
 import { ApolloProvider } from 'react-apollo';
 import graphqlMock from './graphql';
 
-const render = () => 
+const render = () => mount(
   <ApolloProvider client={graphqlMock.client}>
     <TodoList />
-  </ApolloProvider>;
+  </ApolloProvider>
+);
 
 describe('TodoList', () => {
   it('renders todo items good', () => {
-    graqhqlMock.expect(query).reply({ // <- query from the above code
+    graqhqlMock.expect(query).reply({ // <- `query` from the code above
       items: [
         { id: '1', name: 'one' },
         { id: '2', name: 'two' }
@@ -119,9 +120,11 @@ describe('TodoList', () => {
 });
 ```
 
-The query can be either a `GraphQLQuery` object, or a string, or an applo style
-`{ query, variables }` object. __NOTE__: if you specify expected variables, the
-mock will trigger to that specific query + variables combination only!
+The query can be either a string, or a `GraphQLQuery` object, or an applo style
+`{ query, variables }` options.
+
+__NOTE__: if you specify expected variables, the mock will trigger to that 
+specific query + variables combination only!
 
 ## Testing Mutations
 
@@ -140,9 +143,9 @@ const mutation = gql`
 const CreatorComponent = () =>
   <Mutation mutation={mutation} onError={noop}>
     {(createItem, { data, loading, error }: any) => {
-      if (loading) { return <div>Loading...</div>; }
-      if (error) { return <div>{error.message}</div>; }
-      if (data) { return <div id={data.createItem.id}>{data.createItem.name}</div>; }
+      if (loading) return <div>Loading...</div>;
+      if (error) return <div>{error.message}</div>;
+      if (data) return <div id={data.createItem.id}>{data.createItem.name}</div>;
 
       const onClick = () => createItem({ variables: { name: 'new item' } });
 
@@ -154,10 +157,11 @@ const CreatorComponent = () =>
 Now here how you can test this component through and through with graphql-mock:
 
 ```js
-const render = () => 
+const render = () => mount(
   <ApolloProvider client={graphqlMock.client}>
     <CreatorComponent />
-  </ApolloProvider>;
+  </ApolloProvider>
+);
 
 describe('CreatorComponent', () => {
   it('renders good by default', () => {
@@ -186,7 +190,7 @@ describe('CreatorComponent', () => {
     expect(mock.calls[0]).toEqual([{ name: 'new item' }]);
   });
 
-  it('can take a failure and live another day', () => {
+  it('can take a failure and live to fight another day', () => {
     graphqlMock.expect(mutation).fail('everything is terrible');
 
     const wrapper = render();
