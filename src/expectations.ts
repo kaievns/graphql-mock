@@ -1,4 +1,3 @@
-import { ApolloError } from 'apollo-client';
 import Mock from './mock';
 import { Request } from './history';
 import { normalize, deepEqual } from './utils';
