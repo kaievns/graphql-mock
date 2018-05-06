@@ -29,7 +29,7 @@ const DecoratedComponent = graphql(query)(
     <ToDos items={items} error={error} loading={loading} />
 );
 
-const QueryComponent = () =>
+export const QueryComponent = () =>
   <Query query={query}>
     {({ data: { items = [] } = {}, error, loading }: any) =>
       <ToDos items={items} error={error} loading={loading} />
