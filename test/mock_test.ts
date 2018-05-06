@@ -1,5 +1,6 @@
 import Mock from '../src/mock';
 import { ApolloError } from 'apollo-client';
+import { GraphQLError } from 'graphql';
 
 const query = `
   some query
@@ -20,6 +21,72 @@ describe('Mock', () => {
     });
   });
 
+  describe('#reply(data)', () => {
+    it('saves the data on the mock', () => {
+      const data = { a: 1, b: 2 };
+      mock.reply(data);
+      expect(mock.results.data).toBe(data);
+    });
+
+    it('returns the mock self reference back', () => {
+      const result = mock.reply({ a: 1 });
+      expect(result).toBe(mock);
+    });
+  });
+
+  describe('#fail(error)', () => {
+    it('accepts regular strings as error messages', () => {
+      mock.fail('everything is terrible');
+      expect(mock.results.error).toEqual(new ApolloError({
+        graphQLErrors: [new GraphQLError('everything is terrible')]
+      }));
+    });
+
+    it('accepts an array of objects as errors', () => {
+      mock.fail([
+        { message: 'everything is terrible' },
+        { message: 'absolutely awful' }
+      ]);
+      expect(mock.results.error).toEqual(new ApolloError({
+        graphQLErrors: [
+          new GraphQLError('everything is terrible'),
+          new GraphQLError('absolutely awful')
+        ]
+      }));
+    });
+
+    it('accepts apollo errors as errors too', () => {
+      const error = new ApolloError({
+        graphQLErrors: [new GraphQLError('everything is terrible')]
+      });
+      mock.fail(error);
+      expect(mock.results.error).toBe(error);
+    });
+
+    it('returns a self reference', () => {
+      const result = mock.fail('everything is terrible');
+      expect(result).toBe(mock);
+    });
+  });
+
+  describe('#loading()', () => {
+    it('switches the loading state to true by default', () => {
+      mock.loading();
+      expect(mock.results.loading).toBe(true);
+    });
+
+    it('allows to switch loading state off', () => {
+      mock.results.loading = true;
+      mock.loading(false);
+      expect(mock.results.loading).toBe(false);
+    });
+
+    it('returns a self reference', () => {
+      const result = mock.loading();
+      expect(result).toBe(mock);
+    });
+  });
+
   describe('#response', () => {
     it('returns correct data/loading/networkStatus for a regular mock', () => {
       const mock = new Mock({ query, data: { a: 1 } });
@@ -32,7 +99,7 @@ describe('Mock', () => {
 
     it('returns correct data for an error as well', () => {
       const error = new ApolloError({
-        graphQLErrors: [{ message: 'everything is terrible' } as any]
+        graphQLErrors: [new GraphQLError('everything is terrible')]
       });
       const mock = new Mock({ query, error });
       expect(mock.response).toEqual({

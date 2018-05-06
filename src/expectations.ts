@@ -42,28 +42,4 @@ export default class Expectations {
     this.mocks.push(mock);
     return mock;
   }
-
-  reply(data: any) {
-    // TODO: add the mock time schema validation for the mock data
-    const lastEntry = this.mocks[this.mocks.length - 1];
-    lastEntry.data = data;
-    return this;
-  }
-
-  fail(error: any | any[] | string) {
-    const lastEntry = this.mocks[this.mocks.length - 1];
-    const errors = typeof error === 'string' ? [{ message: error }] : error;
-
-    lastEntry.error = error instanceof ApolloError ? error : new ApolloError({
-      graphQLErrors: Array.isArray(errors) ? errors : [errors]
-    });
-
-    return this;
-  }
-
-  loading(value = true) {
-    const lastEntry = this.mocks[this.mocks.length - 1];
-    lastEntry.loading = value;
-    return this;
-  }
 }

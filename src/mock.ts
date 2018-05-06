@@ -11,27 +11,48 @@ export interface Constructor {
 
 export default class Mock {
   query: string;
-  calls: any[];
-  data: any;
-  error?: ApolloError;
-  loading: boolean;
   variables: any;
+  calls: any[];
+
+  private results = {
+    data: undefined as any,
+    error: undefined as ApolloError,
+    loading: false as boolean
+  };
 
   constructor({ query, data = {}, error, loading = false, variables }: Constructor) {
     this.query = query;
-    this.data = data;
-    this.error = error;
-    this.loading = loading;
     this.variables = variables;
     this.calls = [];
+
+    this.reply(data);
+    this.loading(loading);
+
+    if (error) { this.fail(error); } 
   }
 
-  register(variables: any) {
-    this.calls.push(variables);
+  reply(data: any) {
+    this.results.data = data;
+    return this;
+  }
+
+  fail(error: any | any[] | string) {
+    const errors = typeof error === 'string' ? [{ message: error }] : error;
+
+    this.results.error = error instanceof ApolloError ? error : new ApolloError({
+      graphQLErrors: Array.isArray(errors) ? errors : [errors]
+    });
+
+    return this;
+  }
+
+  loading(state: boolean = true) {
+    this.results.loading = state;
+    return this;
   }
 
   get response() {
-    const { data, error, loading } = this;
+    const { data, error, loading } = this.results;
     const response: any = { data, loading, networkStatus: error ? 'error' : 'ready' };
 
     if (error) { response.error = error; }
@@ -39,6 +60,11 @@ export default class Mock {
     return response;
   }
 
+  register(variables: any) {
+    this.calls.push(variables);
+  }
+
+// sinon mock interface
   get callCount() {
     return this.calls.length;
   }
