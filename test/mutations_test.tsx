@@ -58,4 +58,33 @@ describe('mutation queries', () => {
 
     expect(wrapper.html()).toEqual('<div>Loading...</div>');
   });
+
+  it('registers mutation calls in the history', () => {
+    const mut = mock.expect(mutation).reply({
+      createItem: { id: 1, name: 'new item' }
+    });
+
+    const wrapper = render(<MutatorComponent />);
+    wrapper.find('button').simulate('click');    
+
+    expect(mock.history.requests).toEqual([
+      {
+        mutation: normalize(mutation),
+        variables: { name: 'new item' }
+      }
+    ]);
+  });
+
+  it('allows to verify the exact variables that the mutation has been called with', () => {
+    const mut = mock.expect(mutation).reply({
+      createItem: { id: 1, name: 'new item' }
+    });
+
+    const wrapper = render(<MutatorComponent />);
+    wrapper.find('button').simulate('click');    
+
+    expect(mut.calls).toEqual([
+      [{ name: 'new item'}]
+    ]);
+  });
 });

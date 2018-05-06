@@ -17,7 +17,7 @@ describe('Mock', () => {
   describe('#register(call)', () => {
     it('adds a call into the history', () => {
       mock.register({ a: 1 });
-      expect(mock.calls).toEqual([{ a: 1 }]);
+      expect(mock.calls).toEqual([[{ a: 1 }]]);
     });
   });
 

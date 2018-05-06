@@ -61,7 +61,7 @@ export default class Mock {
   }
 
   register(variables: any) {
-    this.calls.push(variables);
+    this.calls.push([variables]);
   }
 
 // sinon mock interface
@@ -86,10 +86,10 @@ export default class Mock {
   }
 
   calledWith(variables: any) {
-    return this.calls.some(vars => deepEqual(vars, variables));
+    return this.calls.some(([vars]) => deepEqual(vars, variables));
   }
 
   calledOnceWith(variables: any) {
-    return this.calls.filter(vars => deepEqual(vars, variables)).length === 1;
+    return this.calls.filter(([vars]) => deepEqual(vars, variables)).length === 1;
   }
 }
