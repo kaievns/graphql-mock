@@ -1,13 +1,14 @@
 import { ApolloError } from 'apollo-client';
 import Mock from './mock';
 import { Request } from './history';
-import { normalize } from './utils';
+import { normalize, deepEqual } from './utils';
 
 const mockMatch = (mock: Mock, request: Request) => {
   const queryMatch = request.query && mock.query === request.query;
   const mutationMatch = request.mutation && mock.query === request.mutation;
+  const variablesMatch = mock.variables ? deepEqual(mock.variables, request.variables) : true;
 
-  return queryMatch || mutationMatch;
+  return (queryMatch || mutationMatch) && variablesMatch;
 };
 
 export default class Expectations {
@@ -15,16 +16,6 @@ export default class Expectations {
 
   reset() {
     this.mocks = [];
-  }
-
-  findMockResponseFor(request: Request) {
-    const mock = this.mocks.find(m => mockMatch(m, request));
-
-    if (!mock) { return null; }
-
-    mock.register(request.variables);
-
-    return mock.response;
   }
 
   expect(query: string | any) {
@@ -41,5 +32,15 @@ export default class Expectations {
     const mock = new Mock({ query: normalize(actualQuery), variables });
     this.mocks.push(mock);
     return mock;
+  }
+
+  findMockResponseFor(request: Request) {
+    const mock = this.mocks.find(m => mockMatch(m, request));
+
+    if (!mock) { return null; }
+
+    mock.register(request.variables);
+
+    return mock.response;
   }
 }
