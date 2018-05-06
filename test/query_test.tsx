@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { graphql, Query } from 'react-apollo';
-import { ApolloError } from 'apollo-client';
 import gql from 'graphql-tag';
 import { mock, render } from './helper';
 import { normalize } from '../src/utils';
