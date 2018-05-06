@@ -5,6 +5,8 @@ import { makeExecutableSchema, addMockFunctionsToSchema } from 'graphql-tools';
 import { GraphQLSchema } from 'graphql';
 import { FetchResult } from 'apollo-link';
 
+export type AnyApolloOptions = WatchQueryOptions | MutationOptions<any>;
+
 const patchResponse = (original: any, mocked: any | void) => {
   if (mocked) {
     if (original instanceof Promise) {
@@ -18,7 +20,7 @@ const patchResponse = (original: any, mocked: any | void) => {
 };
 
 export default class MockClient extends ApolloClient<NormalizedCacheObject> {
-  findMockFor: (options: any) => any | void;
+  findMockFor: (options: AnyApolloOptions) => any | void;
 
   constructor(typeDefs: string | GraphQLSchema, mocks?: any, resolvers?: any) {
     const schema = typeof typeDefs === 'string' ? makeExecutableSchema({ typeDefs, resolvers }) : typeDefs;
@@ -31,7 +33,7 @@ export default class MockClient extends ApolloClient<NormalizedCacheObject> {
     super({ link, cache });
   }
 
-  notify(callback: (options: any) => any | void) {
+  notify(callback: (options: AnyApolloOptions) => any | void) {
     this.findMockFor = callback;
   }
 

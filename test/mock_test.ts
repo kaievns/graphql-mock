@@ -1,4 +1,5 @@
 import Mock from '../src/mock';
+import { ApolloError } from 'apollo-client';
 
 const query = `
   some query
@@ -16,6 +17,30 @@ describe('Mock', () => {
     it('adds a call into the history', () => {
       mock.register({ a: 1 });
       expect(mock.calls).toEqual([{ a: 1 }]);
+    });
+  });
+
+  describe('#response', () => {
+    it('returns correct data/loading/networkStatus for a regular mock', () => {
+      const mock = new Mock({ query, data: { a: 1 } });
+      expect(mock.response).toEqual({
+        data: { a: 1 },
+        loading: false,
+        networkStatus: 'ready'
+      });
+    });
+
+    it('returns correct data for an error as well', () => {
+      const error = new ApolloError({
+        graphQLErrors: [{ message: 'everything is terrible' } as any]
+      });
+      const mock = new Mock({ query, error });
+      expect(mock.response).toEqual({
+        data: {},
+        error,
+        loading: false,
+        networkStatus: 'error'
+      });
     });
   });
 

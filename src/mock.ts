@@ -1,29 +1,42 @@
 import { deepEqual } from './utils';
+import { ApolloError } from 'apollo-client';
 
 export interface Constructor {
   query: string;
   data?: any;
-  error?: any;
+  error?: ApolloError;
   loading?: boolean;
+  variables?: any;
 }
 
 export default class Mock {
   query: string;
   calls: any[];
   data: any;
-  error?: any;
+  error?: ApolloError;
   loading: boolean;
+  variables: any;
 
-  constructor({ query, data = {}, error, loading = false }: Constructor) {
+  constructor({ query, data = {}, error, loading = false, variables }: Constructor) {
     this.query = query;
     this.data = data;
     this.error = error;
     this.loading = loading;
+    this.variables = variables;
     this.calls = [];
   }
 
-  register(call: any) {
-    this.calls.push(call);
+  register(variables: any) {
+    this.calls.push(variables);
+  }
+
+  get response() {
+    const { data, error, loading } = this;
+    const response: any = { data, loading, networkStatus: error ? 'error' : 'ready' };
+
+    if (error) { response.error = error; }
+
+    return response;
   }
 
   get callCount() {
