@@ -7,12 +7,53 @@ import { FetchResult } from 'apollo-link';
 
 export type AnyApolloOptions = WatchQueryOptions | MutationOptions<any>;
 
+type Callback = (something: any) => void;
+
+const immediatelyResolvingPromise = (something: any) => {
+  const promise = {
+    then(callback: Callback) {
+      callback(something);
+      return promise;
+    },
+
+    catch() {
+      return promise;
+    }
+  };
+
+  return promise;
+};
+
+const immediatelyFailingPromise = (error: Error) => {
+  const promise = {
+    then() {
+      return promise;
+    },
+
+    catch(callback: Callback) {
+      callback(error);
+      return promise;
+    }
+  };
+
+  return promise;
+};
+
 const patchResponse = (original: any, mocked: any | void) => {
   if (mocked) {
+
+    // mutations are handled as Promises in apollo
     if (original instanceof Promise) {
-      return Promise.resolve(mocked);
+      if (mocked.error) {
+        return immediatelyFailingPromise(mocked.error);
+      } else if (mocked.loading) {
+        return Promise.resolve(mocked);
+      }
+
+      return immediatelyResolvingPromise(mocked);
     }
 
+    // regular and subscription queries
     original.currentResult = () => mocked;
   }
   

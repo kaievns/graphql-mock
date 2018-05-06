@@ -13,8 +13,10 @@ const mutation = gql`
   }
 `;
 
+const noop = () => null; // silence errors
+
 const MutatorComponent = () =>
-  <Mutation mutation={mutation}>
+  <Mutation mutation={mutation} onError={noop}>
     {(createItem, { data, loading, error }: any) => {
       if (loading) { return <div>Loading...</div>; }
       if (error) { return <div>{error.message}</div>; }
@@ -27,8 +29,8 @@ const MutatorComponent = () =>
   </Mutation>;
 
 describe('mutation queries', () => {
-  it('allows to mock mutation queries', async () => {
-    const req = mock.expect(mutation).reply({
+  it('allows to mock mutation queries', () => {
+    mock.expect(mutation).reply({
       createItem: { id: 1, name: 'new item' }
     });
 
@@ -36,11 +38,24 @@ describe('mutation queries', () => {
     expect(wrapper.html()).toEqual('<button>click me</button>');
 
     wrapper.find('button').simulate('click');
+    expect(wrapper.html()).toEqual('<div id="1">new item</div>'); 
+  });
+
+  it('allows to specify a failure response', () => {
+    mock.expect(mutation).fail('everything is terrible');
+
+    const wrapper = render(<MutatorComponent />);
+    wrapper.find('button').simulate('click');
+
+    expect(wrapper.html()).toEqual('<div>GraphQL error: everything is terrible</div>');
+  });
+
+  it('allows to test the mutation loading state', () => {
+    mock.expect(mutation).loading(true).reply({ createItem: {} });
+
+    const wrapper = render(<MutatorComponent />);
+    wrapper.find('button').simulate('click');
 
     expect(wrapper.html()).toEqual('<div>Loading...</div>');
-
-    await new Promise(r => setTimeout(r, 50)); // waiting for the response to be passed back in
-
-    expect(wrapper.html()).toEqual('<div id="1">new item</div>'); 
   });
 });
