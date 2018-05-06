@@ -2,10 +2,11 @@ import MockClient from './client';
 import Expectations from './expectations';
 import History from './history';
 import { GraphQLSchema } from 'graphql';
+import Mock from './mock';
 
 export * from './utils';
 export { Request } from './history';
-
+export { default as Mock } from './mock';
 
 export default class GraphQLMock {
   client: MockClient;
@@ -27,7 +28,7 @@ export default class GraphQLMock {
     this.expectations.reset();
   }
 
-  expect(query: string) {
+  expect(query: string | any): Mock {
     return this.expectations.expect(query);
   }
 }

@@ -26,12 +26,13 @@ const schema = `
   }
 `;
 
-export const graphqlMock = new GraphQLMock(schema);
+export const mock = new GraphQLMock(schema);
 
 export const render = (element: JSX.Element) =>
   mount(
-    <ApolloProvider client={graphqlMock.client}>
+    <ApolloProvider client={mock.client}>
       {element}
     </ApolloProvider>
   );
 
+beforeEach(() => mock.reset() );
