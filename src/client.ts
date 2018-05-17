@@ -12,8 +12,7 @@ type Callback = (something: any) => void;
 const immediatelyResolvingPromise = (something: any) => {
   const promise = {
     then(callback: Callback) {
-      callback(something);
-      return promise;
+      return immediatelyResolvingPromise(callback(something));
     },
 
     catch() {
@@ -31,8 +30,7 @@ const immediatelyFailingPromise = (error: Error) => {
     },
 
     catch(callback: Callback) {
-      callback(error);
-      return promise;
+      return immediatelyResolvingPromise(callback(error));
     }
   };
 
