@@ -3,7 +3,6 @@ import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { SchemaLink } from 'apollo-link-schema';
 import { makeExecutableSchema, addMockFunctionsToSchema } from 'graphql-tools';
 import { GraphQLSchema } from 'graphql';
-import { FetchResult } from 'apollo-link';
 
 export type AnyApolloOptions = WatchQueryOptions | MutationOptions<any>;
 
@@ -86,7 +85,7 @@ export default class MockClient extends ApolloClient<NormalizedCacheObject> {
     return patchResponse(result, this.findMockFor(options));
   }
 
-  mutate<T>(options: MutationOptions<T>): Promise<FetchResult<T, any>> {
+  mutate<T>(options: MutationOptions<T>): Promise<any> {
     const result = super.mutate<T>(options);
     return patchResponse(result, this.findMockFor(options));
   }
