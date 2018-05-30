@@ -66,7 +66,7 @@ Yes, it supports mutations too!
 * [Basic Setup](./docs/setup.md)
 * [Testing Queries](./docs/queries.md)
 * [Testing Mutations](./docs/mutations.md)
-* [API Documentation]('./docs/api')
+* [API Documentation](./docs/api.md)
 
 
 ## Copyright & License
