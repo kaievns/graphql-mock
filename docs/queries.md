@@ -47,7 +47,7 @@ const render = () => mount(
 
 describe('TodoList', () => {
   it('renders todo items good', () => {
-    graqhqlMock.expect(query).reply({ // <- `query` from the code above
+    graphqlMock.expect(query).reply({ // <- `query` from the code above
       items: [
         { id: '1', name: 'one' },
         { id: '2', name: 'two' }
