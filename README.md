@@ -10,7 +10,7 @@ and comparing to a vanilla apollo testing setup this enables the following:
 * assert which exact quieries and mutations sent by your code
 * assert exact variables that sent along with queries/mutations
 
-## Quick Exampmle
+## Quick Example
 
 ```js
 import { mount } from 'enzyme';
