@@ -48,7 +48,7 @@ describe('<TodoList />', () => {
   });
 
   it('responds to failures gracefuly', () => {
-    graphqlMock.expect(query).fails('everything is terrible');
+    graphqlMock.expect(query).fail('everything is terrible');
     expect(render().html()).toEqual('<div>everything is terrible</div>');
   });
 
