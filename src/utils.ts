@@ -6,7 +6,7 @@ export const parse = parser.parse;
 export const stringify = printer.print;
 export const normalize = (query: string | object) => {
   const queryObject = typeof(query) === 'string' ? parse(query) : query;
-  return stringify(queryObject);
+  return stringify(queryObject as any);
 };
 
 // TODO: make a more serious implementation of this
