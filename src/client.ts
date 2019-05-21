@@ -16,6 +16,10 @@ const immediatelyResolvingPromise = (something: any) => {
 
     catch() {
       return promise;
+    },
+
+    finally() {
+      return promise;
     }
   };
 
@@ -30,6 +34,10 @@ const immediatelyFailingPromise = (error: Error) => {
 
     catch(callback: Callback) {
       return immediatelyResolvingPromise(callback(error));
+    },
+
+    finally() {
+      return promise;
     }
   };
 
