@@ -12,7 +12,7 @@
     "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
     "precommit": "lint-staged",
     "prepush": "npm test",
-    "prepare": "npm build",
+    "prepare": "npm run build",
     "test": "jest"
   },
   "lint-staged": {
