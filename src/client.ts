@@ -1,8 +1,15 @@
-import { ApolloClient, ApolloQueryResult, ObservableQuery, WatchQueryOptions, MutationOptions, OperationVariables } from 'apollo-client';
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
+import {
+  ApolloClient,
+  ApolloQueryResult, // eslint-disable-line
+  ObservableQuery, // eslint-disable-line
+  WatchQueryOptions, // eslint-disable-line
+  MutationOptions, // eslint-disable-line
+  OperationVariables, // eslint-disable-line
+} from 'apollo-client';
+import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'; // eslint-disable-line
 import { SchemaLink } from 'apollo-link-schema';
 import { makeExecutableSchema, addMockFunctionsToSchema } from 'graphql-tools';
-import { GraphQLSchema } from 'graphql';
+import { GraphQLSchema } from 'graphql'; // eslint-disable-line
 
 export type AnyApolloOptions = WatchQueryOptions | MutationOptions<any>;
 
@@ -16,7 +23,7 @@ const immediatelyResolvingPromise = (something: any) => {
 
     catch() {
       return promise;
-    }
+    },
   };
 
   return promise;
@@ -30,7 +37,7 @@ const immediatelyFailingPromise = (error: Error) => {
 
     catch(callback: Callback) {
       return immediatelyResolvingPromise(callback(error));
-    }
+    },
   };
 
   return promise;
@@ -38,12 +45,12 @@ const immediatelyFailingPromise = (error: Error) => {
 
 const patchResponse = (original: any, mocked: any | void) => {
   if (mocked) {
-
     // mutations are handled as Promises in apollo
     if (original instanceof Promise) {
       if (mocked.error) {
         return immediatelyFailingPromise(mocked.error);
-      } else if (mocked.loading) {
+      }
+      if (mocked.loading) {
         return Promise.resolve(mocked);
       }
 
@@ -53,7 +60,7 @@ const patchResponse = (original: any, mocked: any | void) => {
     // regular and subscription queries
     original.currentResult = () => mocked;
   }
-  
+
   return original;
 };
 
@@ -61,11 +68,12 @@ export default class MockClient extends ApolloClient<NormalizedCacheObject> {
   findMockFor: (options: AnyApolloOptions) => any | void;
 
   constructor(typeDefs: string | GraphQLSchema, mocks?: any, resolvers?: any) {
-    const schema = typeof typeDefs === 'string' ? makeExecutableSchema({ typeDefs, resolvers }) : typeDefs;
+    const schema =
+      typeof typeDefs === 'string' ? makeExecutableSchema({ typeDefs, resolvers }) : typeDefs;
 
     addMockFunctionsToSchema({ schema, mocks });
 
-    const cache = new InMemoryCache((window as any).__APOLLO_STATE__);
+    const cache = new InMemoryCache((window as any).__APOLLO_STATE__); // eslint-disable-line
     const link = new SchemaLink({ schema });
 
     super({ link, cache });
@@ -80,7 +88,9 @@ export default class MockClient extends ApolloClient<NormalizedCacheObject> {
     return patchResponse(result, this.findMockFor(options));
   }
 
-  watchQuery<T = any, TVariables = OperationVariables>(options: WatchQueryOptions<TVariables>): ObservableQuery<T, TVariables> {
+  watchQuery<T = any, TVariables = OperationVariables>(
+    options: WatchQueryOptions<TVariables>
+  ): ObservableQuery<T, TVariables> {
     const result = super.watchQuery<T, TVariables>(options);
     return patchResponse(result, this.findMockFor(options));
   }

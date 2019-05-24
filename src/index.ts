@@ -1,8 +1,8 @@
+import { GraphQLSchema } from 'graphql';// eslint-disable-line
 import MockClient from './client';
 import Expectations from './expectations';
 import History from './history';
-import { GraphQLSchema } from 'graphql';
-import Mock from './mock';
+import Mock from './mock'; // eslint-disable-line
 import Config from './config';
 
 export * from './utils';
@@ -14,7 +14,7 @@ export default class GraphQLMock {
   config = new Config();
   history = new History();
   expectations = new Expectations();
-  
+
   constructor(schema: string | GraphQLSchema, mocks: object = {}, resolvers?: any) {
     this.client = new MockClient(schema, mocks, resolvers);
 
@@ -25,7 +25,9 @@ export default class GraphQLMock {
 
       if (mockResponse == null && !this.config.allowUnmockedRequests) {
         const request = this.history.lastRequest;
-        const vars = request.variables ? `\nVARIABLES:\n${JSON.stringify(variables, null, 2)}\n` : '';
+        const vars = request.variables
+          ? `\nVARIABLES:\n${JSON.stringify(variables, null, 2)}\n`
+          : '';
 
         throw new Error(`Unexpected GraphQL request:\n${request.query || request.mutation}${vars}`);
       }

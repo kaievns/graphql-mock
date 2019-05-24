@@ -22,7 +22,7 @@ const mutation = parse(`
 
 describe('History', () => {
   let history;
-  beforeEach(() => history = new History());
+  beforeEach(() => (history = new History()));
 
   it('initializes with an empty list of requests', () => {
     expect(history.requests).to.have.length(0);
@@ -33,8 +33,8 @@ describe('History', () => {
 
     expect(history.requests).to.eql([
       {
-        query: 'query TodoDos {\n  todos {\n    id\n    name\n  }\n}\n' 
-      }
+        query: 'query TodoDos {\n  todos {\n    id\n    name\n  }\n}\n',
+      },
     ]);
   });
 
@@ -44,8 +44,8 @@ describe('History', () => {
     expect(history.requests).to.eql([
       {
         mutation: `mutation CreateTodo($name: String!) {\n  createToDo(name: $name) {\n    id\n    name\n  }\n}\n`,
-        variables: { name: 'New entry' }
-      }
+        variables: { name: 'New entry' },
+      },
     ]);
   });
 });

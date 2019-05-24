@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "compono-ui-ts"
+  ],
+  "rules": {
+    "no-shadow": "off",
+    "no-return-assign": "off",
+    "prefer-destructuring": "off"
+  }
+}

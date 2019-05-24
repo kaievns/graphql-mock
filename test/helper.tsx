@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { mount } from 'enzyme';
 import { ApolloProvider } from 'react-apollo';
 import { ApolloProvider as HooksProvider } from 'react-apollo-hooks';
 import * as Enzyme from 'enzyme';
@@ -12,7 +11,7 @@ import GraphQLMock from '../src';
 export { expect };
 
 const { window } = new JSDOM('<!doctype html><html><body></body></html>', {
-  url: 'http://localhost/'
+  url: 'http://localhost/',
 });
 
 (global as any).window = window;
@@ -44,12 +43,10 @@ const schema = `
 export const mock = new GraphQLMock(schema);
 
 export const render = (element: JSX.Element) =>
-  mount(
+  Enzyme.mount(
     <ApolloProvider client={mock.client}>
-      <HooksProvider client={mock.client}>
-        {element}
-      </HooksProvider>
+      <HooksProvider client={mock.client}>{element}</HooksProvider>
     </ApolloProvider>
   );
 
-beforeEach(() => mock.reset() );
+beforeEach(() => mock.reset());

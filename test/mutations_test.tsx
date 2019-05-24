@@ -15,30 +15,37 @@ const mutation = gql`
 
 const noop = () => null; // silence errors
 
-const MutatorComponent = () =>
+const MutatorComponent = () => (
   <Mutation mutation={mutation} onError={noop}>
     {(createItem, { data, loading, error }: any) => {
-      if (loading) { return <div>Loading...</div>; }
-      if (error) { return <div>{error.message}</div>; }
-      if (data) { return <div id={data.createItem.id}>{data.createItem.name}</div>; }
+      if (loading) {
+        return <div>Loading...</div>;
+      }
+      if (error) {
+        return <div>{error.message}</div>;
+      }
+      if (data) {
+        return <div id={data.createItem.id}>{data.createItem.name}</div>;
+      }
 
       const onClick = () => createItem({ variables: { name: 'new item' } });
 
       return <button onClick={onClick}>click me</button>;
     }}
-  </Mutation>;
+  </Mutation>
+);
 
 describe('mutation queries', () => {
   it('allows to mock mutation queries', () => {
     mock.expect(mutation).reply({
-      createItem: { id: 1, name: 'new item' }
+      createItem: { id: 1, name: 'new item' },
     });
 
     const wrapper = render(<MutatorComponent />);
     expect(wrapper.html()).to.eql('<button>click me</button>');
 
     wrapper.find('button').simulate('click');
-    expect(wrapper.html()).to.eql('<div id="1">new item</div>'); 
+    expect(wrapper.html()).to.eql('<div id="1">new item</div>');
   });
 
   it('allows to specify a failure response', () => {
@@ -51,7 +58,10 @@ describe('mutation queries', () => {
   });
 
   it('allows to test the mutation loading state', () => {
-    mock.expect(mutation).loading(true).reply({ createItem: {} });
+    mock
+      .expect(mutation)
+      .loading(true)
+      .reply({ createItem: {} });
 
     const wrapper = render(<MutatorComponent />);
     wrapper.find('button').simulate('click');
@@ -61,30 +71,28 @@ describe('mutation queries', () => {
 
   it('registers mutation calls in the history', () => {
     mock.expect(mutation).reply({
-      createItem: { id: 1, name: 'new item' }
+      createItem: { id: 1, name: 'new item' },
     });
 
     const wrapper = render(<MutatorComponent />);
-    wrapper.find('button').simulate('click');    
+    wrapper.find('button').simulate('click');
 
     expect(mock.history.requests).to.eql([
       {
         mutation: normalize(mutation),
-        variables: { name: 'new item' }
-      }
+        variables: { name: 'new item' },
+      },
     ]);
   });
 
   it('allows to verify the exact variables that the mutation has been called with', () => {
     const mut = mock.expect(mutation).reply({
-      createItem: { id: 1, name: 'new item' }
+      createItem: { id: 1, name: 'new item' },
     });
 
     const wrapper = render(<MutatorComponent />);
-    wrapper.find('button').simulate('click');    
+    wrapper.find('button').simulate('click');
 
-    expect(mut.calls).to.eql([
-      [{ name: 'new item'}]
-    ]);
+    expect(mut.calls).to.eql([[{ name: 'new item' }]]);
   });
 });
