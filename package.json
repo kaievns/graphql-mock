@@ -54,6 +54,7 @@
     "mocha": "^6.1.4",
     "react": "^16.8.6",
     "react-apollo": "^2.5.5",
+    "react-apollo-hooks": "^0.4.5",
     "react-dom": "^16.8.6",
     "ts-node": "^8.1.0",
     "tslint": "^5.16.0",

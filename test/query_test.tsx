@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Query } from 'react-apollo';
+import { useQuery } from 'react-apollo-hooks';
 import gql from 'graphql-tag';
 import { mock, render, expect } from './helper';
 import { normalize } from '../src/utils';
@@ -31,6 +32,13 @@ export const QueryComponent = () =>
     }
   </Query>;
 
+export const HookedQueryComponent = () => {
+  const { data, error, loading } = useQuery(query);
+  const { items = [] } = data || {};
+
+  return <ToDos items={items} error={error} loading={loading} />;
+};
+
 describe('query mocking', () => {
   describe('Wrapped component', () => {
     it('handles mocked response', () => {
@@ -53,6 +61,30 @@ describe('query mocking', () => {
     it('allows to simulate loading state too', () => {
       mock.expect(query).loading(true);
       expect(render(<QueryComponent />).html()).to.eql('<div>Loading...</div>');
+    });
+  });
+
+  describe('hooked component', () => {
+    it('handles mocked response', () => {
+      mock.expect(query).reply({
+        items: [
+          { id: '1', name: 'one' },
+          { id: '2', name: 'two' }
+        ]
+      });
+
+      expect(render(<HookedQueryComponent />).html()).to.eql('<ul><li>one</li><li>two</li></ul>');
+    });
+
+    it('allows to mock error states too', () => {
+      mock.expect(query).fail('everything is terrible');
+
+      expect(render(<HookedQueryComponent />).html()).to.eql('<div>GraphQL error: everything is terrible</div>');
+    });
+
+    it('allows to simulate loading state too', () => {
+      mock.expect(query).loading(true);
+      expect(render(<HookedQueryComponent />).html()).to.eql('<div>Loading...</div>');
     });
   });
 
