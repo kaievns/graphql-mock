@@ -7,7 +7,6 @@
     "outDir": "./dist/",
     "target": "es6",
     "pretty": true,
-    "noImplicitAny": true,
     "noUnusedLocals": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,

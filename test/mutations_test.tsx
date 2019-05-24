@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
-import { mock, render } from './helper';
+import { mock, render, expect } from './helper';
 import { normalize } from '../src/utils';
 
 const mutation = gql`
@@ -35,10 +35,10 @@ describe('mutation queries', () => {
     });
 
     const wrapper = render(<MutatorComponent />);
-    expect(wrapper.html()).toEqual('<button>click me</button>');
+    expect(wrapper.html()).to.eql('<button>click me</button>');
 
     wrapper.find('button').simulate('click');
-    expect(wrapper.html()).toEqual('<div id="1">new item</div>'); 
+    expect(wrapper.html()).to.eql('<div id="1">new item</div>'); 
   });
 
   it('allows to specify a failure response', () => {
@@ -47,7 +47,7 @@ describe('mutation queries', () => {
     const wrapper = render(<MutatorComponent />);
     wrapper.find('button').simulate('click');
 
-    expect(wrapper.html()).toEqual('<div>GraphQL error: everything is terrible</div>');
+    expect(wrapper.html()).to.eql('<div>GraphQL error: everything is terrible</div>');
   });
 
   it('allows to test the mutation loading state', () => {
@@ -56,18 +56,18 @@ describe('mutation queries', () => {
     const wrapper = render(<MutatorComponent />);
     wrapper.find('button').simulate('click');
 
-    expect(wrapper.html()).toEqual('<div>Loading...</div>');
+    expect(wrapper.html()).to.eql('<div>Loading...</div>');
   });
 
   it('registers mutation calls in the history', () => {
-    const mut = mock.expect(mutation).reply({
+    mock.expect(mutation).reply({
       createItem: { id: 1, name: 'new item' }
     });
 
     const wrapper = render(<MutatorComponent />);
     wrapper.find('button').simulate('click');    
 
-    expect(mock.history.requests).toEqual([
+    expect(mock.history.requests).to.eql([
       {
         mutation: normalize(mutation),
         variables: { name: 'new item' }
@@ -83,7 +83,7 @@ describe('mutation queries', () => {
     const wrapper = render(<MutatorComponent />);
     wrapper.find('button').simulate('click');    
 
-    expect(mut.calls).toEqual([
+    expect(mut.calls).to.eql([
       [{ name: 'new item'}]
     ]);
   });
