@@ -15,22 +15,29 @@ const query = gql`
 `;
 
 const ToDos = ({ items, error, loading }: any) => {
-  if (loading) { return <div>Loading...</div>; }
-  if (error) { return <div>{error.message}</div>; }
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>{error.message}</div>;
+  }
 
   return (
     <ul>
-      {items.map(item => <li key={item.id} >{item.name}</li>)}
+      {items.map(item => (
+        <li key={item.id}>{item.name}</li>
+      ))}
     </ul>
   );
 };
 
-export const QueryComponent = () =>
+export const QueryComponent = () => (
   <Query query={query}>
-    {({ data: { items = [] } = {}, error, loading }: any) =>
+    {({ data: { items = [] } = {}, error, loading }: any) => (
       <ToDos items={items} error={error} loading={loading} />
-    }
-  </Query>;
+    )}
+  </Query>
+);
 
 export const HookedQueryComponent = () => {
   const { data, error, loading } = useQuery(query);
@@ -43,10 +50,7 @@ describe('query mocking', () => {
   describe('Wrapped component', () => {
     it('handles mocked response', () => {
       mock.expect(query).reply({
-        items: [
-          { id: '1', name: 'one' },
-          { id: '2', name: 'two' }
-        ]
+        items: [{ id: '1', name: 'one' }, { id: '2', name: 'two' }],
       });
 
       expect(render(<QueryComponent />).html()).to.eql('<ul><li>one</li><li>two</li></ul>');
@@ -55,7 +59,9 @@ describe('query mocking', () => {
     it('allows to mock error states too', () => {
       mock.expect(query).fail('everything is terrible');
 
-      expect(render(<QueryComponent />).html()).to.eql('<div>GraphQL error: everything is terrible</div>');
+      expect(render(<QueryComponent />).html()).to.eql(
+        '<div>GraphQL error: everything is terrible</div>'
+      );
     });
 
     it('allows to simulate loading state too', () => {
@@ -67,10 +73,7 @@ describe('query mocking', () => {
   describe('hooked component', () => {
     it('handles mocked response', () => {
       mock.expect(query).reply({
-        items: [
-          { id: '1', name: 'one' },
-          { id: '2', name: 'two' }
-        ]
+        items: [{ id: '1', name: 'one' }, { id: '2', name: 'two' }],
       });
 
       expect(render(<HookedQueryComponent />).html()).to.eql('<ul><li>one</li><li>two</li></ul>');
@@ -79,7 +82,9 @@ describe('query mocking', () => {
     it('allows to mock error states too', () => {
       mock.expect(query).fail('everything is terrible');
 
-      expect(render(<HookedQueryComponent />).html()).to.eql('<div>GraphQL error: everything is terrible</div>');
+      expect(render(<HookedQueryComponent />).html()).to.eql(
+        '<div>GraphQL error: everything is terrible</div>'
+      );
     });
 
     it('allows to simulate loading state too', () => {
@@ -89,12 +94,12 @@ describe('query mocking', () => {
   });
 
   it('registers requests in the history', () => {
-    mock.expect(query).reply({ items: [] });    
+    mock.expect(query).reply({ items: [] });
     render(<QueryComponent />);
     expect(mock.history.requests).to.eql([
       {
-        query: normalize(query)
-      }
+        query: normalize(query),
+      },
     ]);
   });
 });

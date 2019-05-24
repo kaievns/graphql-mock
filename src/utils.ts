@@ -2,10 +2,10 @@ import * as parser from 'graphql/language/parser';
 import * as printer from 'graphql/language/printer';
 import * as fastDeepEqual from 'fast-deep-equal';
 
-export const parse = parser.parse;
+export const { parse } = parser;
 export const stringify = printer.print;
 export const normalize = (query: string | object) => {
-  const queryObject = typeof(query) === 'string' ? parse(query) : query;
+  const queryObject = typeof query === 'string' ? parse(query) : query;
   return stringify(queryObject as any);
 };
 

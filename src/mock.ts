@@ -1,5 +1,5 @@
-import { deepEqual } from './utils';
 import { ApolloError } from 'apollo-client';
+import { deepEqual } from './utils';
 
 export interface Constructor {
   query: string;
@@ -17,7 +17,7 @@ export default class Mock {
   private results = {
     data: undefined as any,
     error: undefined as ApolloError,
-    loading: false as boolean
+    loading: false as boolean,
   };
 
   constructor({ query, data = {}, error, loading = false, variables }: Constructor) {
@@ -28,7 +28,9 @@ export default class Mock {
     this.reply(data);
     this.loading(loading);
 
-    if (error) { this.fail(error); } 
+    if (error) {
+      this.fail(error);
+    }
   }
 
   reply(data: any) {
@@ -39,9 +41,12 @@ export default class Mock {
   fail(error: any | any[] | string) {
     const errors = typeof error === 'string' ? [{ message: error }] : error;
 
-    this.results.error = error instanceof ApolloError ? error : new ApolloError({
-      graphQLErrors: Array.isArray(errors) ? errors : [errors]
-    });
+    this.results.error =
+      error instanceof ApolloError
+        ? error
+        : new ApolloError({
+            graphQLErrors: Array.isArray(errors) ? errors : [errors],
+          });
 
     return this;
   }
@@ -55,7 +60,9 @@ export default class Mock {
     const { data, error, loading } = this.results;
     const response: any = { data, loading, networkStatus: error ? 'error' : 'ready' };
 
-    if (error) { response.error = error; }
+    if (error) {
+      response.error = error;
+    }
 
     return response;
   }
@@ -64,7 +71,7 @@ export default class Mock {
     this.calls.push([variables]);
   }
 
-// sinon mock interface
+  // sinon mock interface
   get callCount() {
     return this.calls.length;
   }

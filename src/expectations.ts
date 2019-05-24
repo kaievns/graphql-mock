@@ -1,5 +1,5 @@
 import Mock from './mock';
-import { Request } from './history';
+import { Request } from './history'; // eslint-disable-line
 import { normalize, deepEqual } from './utils';
 
 const mockMatch = (mock: Mock, request: Request) => {
@@ -21,10 +21,12 @@ export default class Expectations {
     let variables;
     let actualQuery;
 
-    if (query.query || query.mutation) { // assuming it's an apollo-ish { query, variables } deal
+    if (query.query || query.mutation) {
+      // assuming it's an apollo-ish { query, variables } deal
       variables = query.variables;
       actualQuery = query.query || query.mutation;
-    } else { // assuming it's a string or a parsed graphql query
+    } else {
+      // assuming it's a string or a parsed graphql query
       actualQuery = query;
     }
 
@@ -36,7 +38,9 @@ export default class Expectations {
   findMockResponseFor(request: Request) {
     const mock = this.mocks.find(m => mockMatch(m, request));
 
-    if (!mock) { return null; }
+    if (!mock) {
+      return null;
+    }
 
     mock.register(request.variables);
 

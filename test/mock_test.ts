@@ -1,6 +1,6 @@
-import Mock from '../src/mock';
 import { ApolloError } from 'apollo-client';
 import { GraphQLError } from 'graphql';
+import Mock from '../src/mock';
 import { expect } from './helper';
 
 const query = `
@@ -9,7 +9,7 @@ const query = `
 
 describe('Mock', () => {
   let mock;
-  beforeEach(() => mock = new Mock({ query }));
+  beforeEach(() => (mock = new Mock({ query })));
 
   it('starts with an empty list of calls', () => {
     expect(mock.calls).to.have.length(0);
@@ -38,28 +38,28 @@ describe('Mock', () => {
   describe('#fail(error)', () => {
     it('accepts regular strings as error messages', () => {
       mock.fail('everything is terrible');
-      expect({...mock.results.error}).to.eql({...new ApolloError({
-        graphQLErrors: [new GraphQLError('everything is terrible')]
-      })});
+      expect({ ...mock.results.error }).to.eql({
+        ...new ApolloError({
+          graphQLErrors: [new GraphQLError('everything is terrible')],
+        }),
+      });
     });
 
     it('accepts an array of objects as errors', () => {
-      mock.fail([
-        { message: 'everything is terrible' },
-        { message: 'absolutely awful' }
-      ]);
+      mock.fail([{ message: 'everything is terrible' }, { message: 'absolutely awful' }]);
       expect({ ...mock.results.error }).to.eql({
         ...new ApolloError({
-        graphQLErrors: [
-          new GraphQLError('everything is terrible'),
-          new GraphQLError('absolutely awful')
-        ]
-      })});
+          graphQLErrors: [
+            new GraphQLError('everything is terrible'),
+            new GraphQLError('absolutely awful'),
+          ],
+        }),
+      });
     });
 
     it('accepts apollo errors as errors too', () => {
       const error = new ApolloError({
-        graphQLErrors: [new GraphQLError('everything is terrible')]
+        graphQLErrors: [new GraphQLError('everything is terrible')],
       });
       mock.fail(error);
       expect(mock.results.error).to.eql(error);
@@ -95,20 +95,20 @@ describe('Mock', () => {
       expect(mock.response).to.eql({
         data: { a: 1 },
         loading: false,
-        networkStatus: 'ready'
+        networkStatus: 'ready',
       });
     });
 
     it('returns correct data for an error as well', () => {
       const error = new ApolloError({
-        graphQLErrors: [new GraphQLError('everything is terrible')]
+        graphQLErrors: [new GraphQLError('everything is terrible')],
       });
       const mock = new Mock({ query, error });
       expect(mock.response).to.eql({
         data: {},
         error,
         loading: false,
-        networkStatus: 'error'
+        networkStatus: 'error',
       });
     });
   });

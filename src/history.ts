@@ -16,20 +16,28 @@ export default class History {
   register({ query, mutation, variables }: any) {
     const request = {} as Request;
 
-    if (query) { request.query = stringify(query); }
-    if (mutation) { request.mutation = stringify(mutation); }
-    if (variables) { request.variables = variables; }
+    if (query) {
+      request.query = stringify(query);
+    }
+    if (mutation) {
+      request.mutation = stringify(mutation);
+    }
+    if (variables) {
+      request.variables = variables;
+    }
 
     this.requests.push(request);
   }
 
   get queries() {
-    return this.requests.filter(r => !!r.query)
+    return this.requests
+      .filter(r => !!r.query)
       .map(({ query, variables }) => fillIn(query, variables));
   }
 
   get mutations() {
-    return this.requests.filter(r => !!r.mutation)
+    return this.requests
+      .filter(r => !!r.mutation)
       .map(({ mutation, variables }) => fillIn(mutation, variables));
   }
 
@@ -38,12 +46,12 @@ export default class History {
   }
 
   get lastQuery() {
-    const queries = this.queries;
+    const { queries } = this;
     return queries[queries.length - 1];
   }
 
   get lastMutation() {
-    const mutations = this.mutations;
+    const { mutations } = this;
     return mutations[mutations.length - 1];
   }
 }

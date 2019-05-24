@@ -23,7 +23,7 @@ const mutation = `
 
 describe('Expectations', () => {
   let expectations;
-  beforeEach(() => expectations = new Expectations());
+  beforeEach(() => (expectations = new Expectations()));
 
   it('starts with an empty list of mocks', () => {
     expect(expectations.mocks).to.eql([]);
@@ -32,7 +32,7 @@ describe('Expectations', () => {
   describe('expect(query)', () => {
     it('allows to create a basic query expectation', () => {
       const mock = expectations.expect(query);
-      
+
       expect(mock).to.be.instanceOf(Mock);
       expect(mock).to.eql(new Mock({ query: normalize(query) }));
     });
@@ -73,7 +73,7 @@ describe('Expectations', () => {
   describe('#findMockResponseFor', () => {
     const request = {
       query: normalize(query),
-      variables: { a: 1 }
+      variables: { a: 1 },
     };
 
     it('returns null if there is no mocks', () => {
@@ -100,7 +100,7 @@ describe('Expectations', () => {
     });
 
     it('matches only specific pair if both query and variables were mocked', () => {
-      const mock = expectations.expect({ query, variables: { b: 2 }});
+      const mock = expectations.expect({ query, variables: { b: 2 } });
 
       const resp1 = expectations.findMockResponseFor({ ...request, variables: { a: 1 } });
       const resp2 = expectations.findMockResponseFor({ ...request, variables: { b: 2 } });
@@ -113,7 +113,7 @@ describe('Expectations', () => {
       const mock = expectations.expect(mutation);
       const response = expectations.findMockResponseFor({
         mutation: normalize(mutation),
-        variables: { b: 2 }
+        variables: { b: 2 },
       });
 
       expect(response).to.eql(mock.response);

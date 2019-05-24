@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { ApolloClient } from 'apollo-client';
 import { mock, render, expect } from './helper';
 import { QueryComponent } from './query_test';
-import { ApolloClient } from 'apollo-client';
 import History from '../src/history';
 
 describe('GraphqlMock', () => {
@@ -16,7 +16,9 @@ describe('GraphqlMock', () => {
   it('explodes when query does not have an appropriate mock', () => {
     expect(() => {
       render(<QueryComponent />);
-    }).to.throw('Unexpected GraphQL request:\nquery GetItems {\n  items {\n    id\n    name\n  }\n}\n');
+    }).to.throw(
+      'Unexpected GraphQL request:\nquery GetItems {\n  items {\n    id\n    name\n  }\n}\n'
+    );
   });
 
   it('does not explode if one allows for requests to fall through', () => {
