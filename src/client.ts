@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloQueryResult, ObservableQuery, WatchQueryOptions, MutationOptions } from 'apollo-client';
+import { ApolloClient, ApolloQueryResult, ObservableQuery, WatchQueryOptions, MutationOptions, OperationVariables } from 'apollo-client';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { SchemaLink } from 'apollo-link-schema';
 import { makeExecutableSchema, addMockFunctionsToSchema } from 'graphql-tools';
@@ -80,8 +80,8 @@ export default class MockClient extends ApolloClient<NormalizedCacheObject> {
     return patchResponse(result, this.findMockFor(options));
   }
 
-  watchQuery<T>(options: WatchQueryOptions): ObservableQuery<T> {
-    const result = super.watchQuery<T>(options);
+  watchQuery<T = any, TVariables = OperationVariables>(options: WatchQueryOptions<TVariables>): ObservableQuery<T, TVariables> {
+    const result = super.watchQuery<T, TVariables>(options);
     return patchResponse(result, this.findMockFor(options));
   }
 

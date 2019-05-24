@@ -3,10 +3,27 @@ import { mount } from 'enzyme';
 import { ApolloProvider } from 'react-apollo';
 import * as Enzyme from 'enzyme';
 import * as Adapter from 'enzyme-adapter-react-16';
+import { expect } from 'chai';
+import { JSDOM } from 'jsdom';
+import GraphQLMock from '../src';
+
+(global as any).expect = expect;
+export { expect };
+
+const { window } = new JSDOM('<!doctype html><html><body></body></html>', {
+  url: 'http://localhost/'
+});
+
+(global as any).window = window;
+(global as any).document = window.document;
+(global as any).navigator = window.navigator;
+
+// react 16 fake polyfill
+(global as any).requestAnimationFrame = callback => {
+  setTimeout(callback, 0);
+};
 
 Enzyme.configure({ adapter: new Adapter() });
-
-import GraphQLMock from '../src';
 
 const schema = `
   type Item {
