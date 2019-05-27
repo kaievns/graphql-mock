@@ -5,6 +5,7 @@ import {
   WatchQueryOptions, // eslint-disable-line
   MutationOptions, // eslint-disable-line
   OperationVariables, // eslint-disable-line
+  QueryOptions, // eslint-disable-line
 } from 'apollo-client';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'; // eslint-disable-line
 import { SchemaLink } from 'apollo-link-schema';
@@ -52,6 +53,7 @@ const immediatelyFailingPromise = (error: Error) => {
 };
 
 const patchResponse = (original: any, mocked: any | void) => {
+  // console.log({ original, mocked })
   if (mocked) {
     // mutations are handled as Promises in apollo
     if (original instanceof Promise) {
@@ -91,7 +93,7 @@ export default class MockClient extends ApolloClient<NormalizedCacheObject> {
     this.findMockFor = callback;
   }
 
-  query<T>(options: WatchQueryOptions): Promise<ApolloQueryResult<T>> {
+  query<T>(options: QueryOptions<OperationVariables>): Promise<ApolloQueryResult<T>> {
     const result = super.query<T>(options);
     return patchResponse(result, this.findMockFor(options));
   }
