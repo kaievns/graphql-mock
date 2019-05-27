@@ -42,11 +42,18 @@ const schema = `
 
 export const mock = new GraphQLMock(schema);
 
-export const render = (element: JSX.Element) =>
-  Enzyme.mount(
-    <ApolloProvider client={mock.client}>
-      <HooksProvider client={mock.client}>{element}</HooksProvider>
+const { client } = mock;
+
+export const render = (element: JSX.Element) => {
+  console.log('rendering...');
+  return Enzyme.mount(
+    <ApolloProvider client={client}>
+      <HooksProvider client={client}>{element}</HooksProvider>
     </ApolloProvider>
   );
+};
 
-beforeEach(() => mock.reset());
+beforeEach(() => {
+  console.log('resetting');
+  mock.reset();
+});

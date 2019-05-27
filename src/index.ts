@@ -18,10 +18,17 @@ export default class GraphQLMock {
   constructor(schema: string | GraphQLSchema, mocks: object = {}, resolvers?: any) {
     this.client = new MockClient(schema, mocks, resolvers);
 
+    console.log('instantiating');
+
     this.client.notify(({ query, mutation, variables }: any) => {
       this.history.register({ query, mutation, variables });
 
+      console.log({ expectations: this.expectations.mocks });
+      console.log({ mocks: this.expectations.mocks.map(m => m.response) });
+
       const mockResponse = this.expectations.findMockResponseFor(this.history.lastRequest);
+
+      console.log({ mockResponse });
 
       if (mockResponse == null && !this.config.allowUnmockedRequests) {
         const request = this.history.lastRequest;

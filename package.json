@@ -10,8 +10,6 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "lint": "eslint '{src,test}/**/*.{ts,tsx}'",
-    "precommit": "lint-staged",
-    "prepush": "npm test",
     "prepare": "npm build",
     "test": "mocha"
   },
@@ -46,7 +44,7 @@
     "babel-plugin-module-resolver": "^3.2.0",
     "chai": "^4.2.0",
     "enzyme": "^3.9.0",
-    "enzyme-adapter-react-16": "^1.13.0",
+    "enzyme-adapter-react-16": "^1.13.2",
     "eslint-config-compono-ui-ts": "^1.0.0",
     "graphql": "^14.3.0",
     "graphql-tag": "^2.10.1",
@@ -58,7 +56,13 @@
     "react-apollo": "^2.5.5",
     "react-apollo-hooks": "^0.4.5",
     "react-dom": "^16.8.6",
-    "ts-node": "^8.1.0",
+    "ts-node": "^8.2.0",
     "typescript": "^3.4.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm test"
+    }
   }
 }
