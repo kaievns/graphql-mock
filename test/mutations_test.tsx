@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Mutation } from 'react-apollo';
 import { useMutation } from 'react-apollo-hooks';
 import gql from 'graphql-tag';
+import { spy } from 'sinon';
 import { mock, render, expect } from './helper';
 import { normalize } from '../src/utils';
 
@@ -49,6 +50,27 @@ const HookedMutatorComponent = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+  if (error) {
+    return <div>{error.message}</div>;
+  }
+  if (data) {
+    return <div id={data.createItem.id}>{data.createItem.name}</div>;
+  }
+
+  return <button onClick={onClick}>click me</button>;
+};
+
+const HookedMutatorUpdateComponent = ({ update }: any) => {
+  const [response, setResponse] = React.useState({ data: null, loading: false, error: null });
+  const createItem = useMutation(mutation, { update });
+
+  const onClick = () =>
+    createItem({ variables: { name: 'new item' } })
+      .then(setResponse as () => void)
+      .catch(error => setResponse({ data: null, loading: false, error }));
+
+  const { data, error } = response;
+
   if (error) {
     return <div>{error.message}</div>;
   }
@@ -183,6 +205,29 @@ describe('mutation queries', () => {
       wrapper.find('button').simulate('click');
 
       expect(mut.calls).to.eql([[{ name: 'new item' }]]);
+    });
+
+    it('mocks the result arg in update function', async () => {
+      mock.expect(mutation).reply({
+        createItem: { id: 1, name: 'new item' },
+      });
+      const update = spy();
+      const wrapper = render(<HookedMutatorUpdateComponent update={update} />);
+      wrapper.find('button').simulate('click');
+
+      await Promise.resolve();
+
+      expect(update.called).to.be.true;
+      expect(update.args[0][1]).to.eql({
+        data: {
+          createItem: {
+            id: 1,
+            name: 'new item',
+          },
+        },
+        loading: false,
+        networkStatus: 'ready',
+      });
     });
   });
 });
