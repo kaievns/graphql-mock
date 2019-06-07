@@ -98,7 +98,12 @@ export default class MockClient extends ApolloClient<NormalizedCacheObject> {
   }
 
   mutate<T>(options: MutationOptions<T>): Promise<any> {
+    const mock = this.findMockFor(options);
+    if (options.update) {
+      const updateFn = options.update;
+      options.update = proxy => updateFn(proxy, mock);
+    }
     const result = super.mutate<T>(options);
-    return patchResponse(result, this.findMockFor(options));
+    return patchResponse(result, mock);
   }
 }
