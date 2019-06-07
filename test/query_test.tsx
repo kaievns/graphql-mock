@@ -14,6 +14,22 @@ const query = gql`
   }
 `;
 
+const query2 = gql`
+  query GetItems {
+    items {
+      id
+    }
+  }
+`;
+
+const query3 = gql`
+  query GetItems {
+    items {
+      name
+    }
+  }
+`;
+
 const ToDos = ({ items, error, loading }: any) => {
   if (loading) {
     return <div>Loading...</div>;
@@ -39,7 +55,7 @@ export const QueryComponent = () => (
   </Query>
 );
 
-export const HookedQueryComponent = () => {
+export const HookedQueryComponent = ({ query }: any) => {
   const { data, error, loading } = useQuery(query);
   const { items = [] } = data || {};
 
@@ -72,32 +88,36 @@ describe('query mocking', () => {
     });
   });
 
-  describe.only('hooked component', () => {
+  describe('hooked component', () => {
     it('handles mocked response', () => {
       console.log('case 1', { before: mock.expectations.mocks.map(m => m.response) });
       mock.expect(query).reply({
         items: [{ id: '1', name: 'one' }, { id: '2', name: 'two' }],
       });
-      console.log({ after: mock.expectations.mocks.map(m => m.response) });
+      console.log('case 1', { after: mock.expectations.mocks.map(m => m.response) });
 
-      expect(render(<HookedQueryComponent />).html()).to.eql('<ul><li>one</li><li>two</li></ul>');
+      expect(render(<HookedQueryComponent query={query} />).html()).to.eql(
+        '<ul><li>one</li><li>two</li></ul>'
+      );
     });
 
     it('allows to mock error states too', () => {
       console.log({ before: mock.expectations.mocks.map(m => m.response) });
 
-      mock.expect(query).fail('everything is terrible');
+      mock.expect(query2).fail('everything is terrible');
 
       console.log({ after: mock.expectations.mocks.map(m => m.response) });
 
-      expect(render(<HookedQueryComponent />).html()).to.eql(
+      expect(render(<HookedQueryComponent query={query2} />).html()).to.eql(
         '<div>GraphQL error: everything is terrible</div>'
       );
     });
 
     it('allows to simulate loading state too', () => {
-      mock.expect(query).loading(true);
-      expect(render(<HookedQueryComponent />).html()).to.eql('<div>Loading...</div>');
+      mock.expect(query3).loading(true);
+      expect(render(<HookedQueryComponent query={query3} />).html()).to.eql(
+        '<div>Loading...</div>'
+      );
     });
   });
 
