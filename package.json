@@ -10,8 +10,6 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "lint": "eslint '{src,test}/**/*.{ts,tsx}'",
-    "precommit": "lint-staged",
-    "prepush": "npm test",
     "prepare": "npm run build",
     "test": "mocha"
   },
