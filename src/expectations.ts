@@ -1,5 +1,5 @@
 import Mock from './mock';
-import { Request } from './history'; // eslint-disable-line
+import { Request } from './history';
 import { normalize, deepEqual } from './utils';
 
 const mockMatch = (mock: Mock, request: Request) => {

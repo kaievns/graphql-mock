@@ -39,7 +39,6 @@
     "@types/mocha": "^5.2.7",
     "@types/nock": "^10.0.3",
     "@types/node": "^12.6.8",
-    "@types/node-fetch": "^2.3.7",
     "@types/react": "^16.8.23",
     "apollo-cache-inmemory": "^1.6.2",
     "apollo-client": "^2.6.3",

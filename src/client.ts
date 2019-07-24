@@ -1,16 +1,16 @@
 import {
   ApolloClient,
-  ApolloQueryResult, // eslint-disable-line
-  ObservableQuery, // eslint-disable-line
-  WatchQueryOptions, // eslint-disable-line
-  MutationOptions, // eslint-disable-line
-  OperationVariables, // eslint-disable-line
-  QueryOptions, // eslint-disable-line
+  ApolloQueryResult,
+  ObservableQuery,
+  WatchQueryOptions,
+  MutationOptions,
+  OperationVariables,
+  QueryOptions,
 } from 'apollo-client';
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'; // eslint-disable-line
+import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { SchemaLink } from 'apollo-link-schema';
 import { makeExecutableSchema, addMockFunctionsToSchema } from 'graphql-tools';
-import { GraphQLSchema } from 'graphql'; // eslint-disable-line
+import { GraphQLSchema } from 'graphql';
 
 export type AnyApolloOptions = WatchQueryOptions | MutationOptions<any>;
 
@@ -53,7 +53,6 @@ const immediatelyFailingPromise = (error: Error) => {
 };
 
 const patchResponse = (original: any, mocked: any | void) => {
-  // console.log({ original, mocked })
   if (mocked) {
     // mutations are handled as Promises in apollo
     if (original instanceof Promise) {
@@ -66,9 +65,9 @@ const patchResponse = (original: any, mocked: any | void) => {
 
       return immediatelyResolvingPromise(mocked);
     }
-
     // regular and subscription queries
-    original.currentResult = () => mocked;
+    // NOTE `currentResult` is depricated in favour of `getCurrentResult`
+    original.currentResult = original.getCurrentResult = () => mocked;
   }
 
   return original;

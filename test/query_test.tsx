@@ -43,12 +43,10 @@ export const HookedQueryComponent = () => {
   const { data, error, loading } = useQuery(query);
   const { items = [] } = data || {};
 
-  console.log('inside', { data, error, loading });
-
   return <ToDos items={items} error={error} loading={loading} />;
 };
 
-describe('query mocking', () => {
+describe.only('query mocking', () => {
   describe('Wrapped component', () => {
     it('handles mocked response', () => {
       mock.expect(query).reply({
@@ -74,21 +72,15 @@ describe('query mocking', () => {
 
   describe.only('hooked component', () => {
     it('handles mocked response', () => {
-      console.log('case 1', { before: mock.expectations.mocks.map(m => m.response) });
       mock.expect(query).reply({
         items: [{ id: '1', name: 'one' }, { id: '2', name: 'two' }],
       });
-      console.log({ after: mock.expectations.mocks.map(m => m.response) });
 
       expect(render(<HookedQueryComponent />).html()).to.eql('<ul><li>one</li><li>two</li></ul>');
     });
 
     it('allows to mock error states too', () => {
-      console.log({ before: mock.expectations.mocks.map(m => m.response) });
-
       mock.expect(query).fail('everything is terrible');
-
-      console.log({ after: mock.expectations.mocks.map(m => m.response) });
 
       expect(render(<HookedQueryComponent />).html()).to.eql(
         '<div>GraphQL error: everything is terrible</div>'

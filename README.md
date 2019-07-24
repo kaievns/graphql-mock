@@ -68,9 +68,32 @@ Yes, it supports mutations too!
 * [Testing Mutations](./docs/mutations.md)
 * [API Documentation](./docs/api.md)
 
+## react-apollo-hooks
+
+`graphql-mock` will work with [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) 
+as well. one caviate is that react-apollo-hooks uses internal memoisation for the queries, so
+you will need a new client with every render/test.
+
+`mock.client` - will now automatically return you a new client every time after
+`mock#reset()` called, so it should work fine. as long as you don't deconstruct
+the `client` into a variable outside of the render cycle.
+
+```jsx
+// use this
+<ApolloProvider client={graphqlMock.client}>
+  // ...
+</ ApolloProvider>
+
+// NOT THIS
+const { client } = graphqlMock;
+<ApolloProvider client={client}>
+  // ...
+</ ApolloProvider>
+```
+
 
 ## Copyright & License
 
 All code in this library released under the terms of the MIT license
 
-Copyright (C) 2018 Nikolay Nemshilov
+Copyright (C) 2018-2019 Nikolay Nemshilov

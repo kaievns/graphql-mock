@@ -1,8 +1,8 @@
-import { GraphQLSchema } from 'graphql';// eslint-disable-line
+import { GraphQLSchema } from 'graphql';
 import MockClient from './client';
 import Expectations from './expectations';
 import History from './history';
-import Mock from './mock'; // eslint-disable-line
+import Mock from './mock';
 import Config from './config';
 
 export * from './utils';
@@ -15,20 +15,21 @@ export default class GraphQLMock {
   history = new History();
   expectations = new Expectations();
 
+  private args: any;
+
   constructor(schema: string | GraphQLSchema, mocks: object = {}, resolvers?: any) {
-    this.client = new MockClient(schema, mocks, resolvers);
+    this.args = { schema, mocks, resolvers };
+    this.client = this.getNewClient();
+  }
 
-    console.log('instantiating');
+  getNewClient() {
+    const { schema, mocks, resolvers } = this.args;
+    const client = new MockClient(schema, mocks, resolvers);
 
-    this.client.notify(({ query, mutation, variables }: any) => {
+    client.notify(({ query, mutation, variables }: any) => {
       this.history.register({ query, mutation, variables });
 
-      console.log({ expectations: this.expectations.mocks });
-      console.log({ mocks: this.expectations.mocks.map(m => m.response) });
-
       const mockResponse = this.expectations.findMockResponseFor(this.history.lastRequest);
-
-      console.log({ mockResponse });
 
       if (mockResponse == null && !this.config.allowUnmockedRequests) {
         const request = this.history.lastRequest;
@@ -41,11 +42,15 @@ export default class GraphQLMock {
 
       return mockResponse;
     });
+
+    return client;
   }
 
   reset() {
     this.history.reset();
     this.expectations.reset();
+
+    this.client = this.getNewClient();
   }
 
   expect(query: string | any): Mock {
