@@ -71,26 +71,44 @@ Yes, it supports mutations too!
 ## react-apollo-hooks
 
 `graphql-mock` will work with [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) 
-as well. one caviate is that react-apollo-hooks uses internal memoisation for the queries, so
-you will need a new client with every render/test.
+as well. There are some caviates that relate to the internal implementation of react-apollo-hooks.
 
-`mock.client` - will now automatically return you a new client every time after
-`mock#reset()` called, so it should work fine. as long as you don't deconstruct
-the `client` into a variable outside of the render cycle.
+Firstly it uses internal memoisation for the queries, so you will need a new client with every 
+render/test. `mock.client` will now automatically return you a new client every time after
+`mock#reset()` called, so it should work fine, as long as you don't deconstruct the `client` into 
+a variable outside of the render cycle.
 
 ```jsx
 // use this
 <ApolloProvider client={graphqlMock.client}>
   // ...
-</ ApolloProvider>
+</ApolloProvider>
 
 // NOT THIS
 const { client } = graphqlMock;
 <ApolloProvider client={client}>
   // ...
-</ ApolloProvider>
+</ApolloProvider>
 ```
 
+Secondly `react-apollo-hooks` wrap mutation requests into an extra level of promises, which
+prevents us from processing the response right after an action. Meaning you'll need to wait
+and update the render wrapper:
+
+```jsx
+graphqlMock.expect(mutation).reply({
+  createItem: { id: 1, name: 'new item' }
+});
+
+const wrapper = render();
+wrapper.find('button').simulate('click');
+
+// you need to add those two
+await new Promise(r => setTimeout(r, 10));
+wrapper.update();
+
+expect(wrapper.html()).toEqual('<div id="id">new item</div>');
+```
 
 ## Copyright & License
 

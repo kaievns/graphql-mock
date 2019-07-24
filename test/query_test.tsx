@@ -46,7 +46,7 @@ export const HookedQueryComponent = () => {
   return <ToDos items={items} error={error} loading={loading} />;
 };
 
-describe.only('query mocking', () => {
+describe('query mocking', () => {
   describe('Wrapped component', () => {
     it('handles mocked response', () => {
       mock.expect(query).reply({
@@ -70,7 +70,7 @@ describe.only('query mocking', () => {
     });
   });
 
-  describe.only('hooked component', () => {
+  describe('hooked component', () => {
     it('handles mocked response', () => {
       mock.expect(query).reply({
         items: [{ id: '1', name: 'one' }, { id: '2', name: 'two' }],
