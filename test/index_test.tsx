@@ -26,7 +26,7 @@ describe('GraphqlMock', () => {
 
     const wrapper = render(<QueryComponent />);
 
-    expect(wrapper.html()).to.contain('</ul>');
+    expect(wrapper.html()).to.contain('<div>Loading...</div>');
 
     mock.allowUnmockedRequests(false);
   });

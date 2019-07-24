@@ -122,7 +122,7 @@ describe('mutations', () => {
     });
   });
 
-  describe.only('Hooked mutation component', () => {
+  describe('Hooked mutation component', () => {
     const sleep = () => new Promise(r => setTimeout(r, 10));
 
     it('allows to mock mutation queries', async () => {
