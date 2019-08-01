@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ApolloProvider } from 'react-apollo';
+import { ApolloProvider as BetaProvider } from '@apollo/react-common';
 import { ApolloProvider as HooksProvider } from 'react-apollo-hooks';
 import * as Enzyme from 'enzyme';
 import * as Adapter from 'enzyme-adapter-react-16';
@@ -45,7 +46,9 @@ export const mock = new GraphQLMock(schema);
 export const render = (element: JSX.Element) => {
   return Enzyme.mount(
     <ApolloProvider client={mock.client}>
-      <HooksProvider client={mock.client}>{element}</HooksProvider>
+      <BetaProvider client={mock.client}>
+        <HooksProvider client={mock.client}>{element}</HooksProvider>
+      </BetaProvider>
     </ApolloProvider>
   );
 };

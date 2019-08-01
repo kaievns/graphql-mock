@@ -70,6 +70,8 @@ Yes, it supports mutations too!
 
 ## react-apollo-hooks
 
+TL;DR maybe just use `@apollo/react-hooks`, it works pretty great? No need for any hackery
+
 `graphql-mock` will work with [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks) 
 as well. There are some caviates that relate to the internal implementation of react-apollo-hooks.
 
