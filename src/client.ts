@@ -28,7 +28,7 @@ const immediatelyResolvingPromise = (something: any) => {
 
     finally() {
       return promise;
-    }
+    },
   };
 
   return promise;
@@ -46,7 +46,7 @@ const immediatelyFailingPromise = (error: Error) => {
 
     finally() {
       return promise;
-    }
+    },
   };
 
   return promise;
@@ -85,7 +85,7 @@ export default class MockClient extends ApolloClient<NormalizedCacheObject> {
     const cache = new InMemoryCache((window as any).__APOLLO_STATE__); // eslint-disable-line
     const link = new SchemaLink({ schema });
 
-    super({ link, cache });
+    super({ link, cache, resolvers: {} });
   }
 
   notify(callback: (options: AnyApolloOptions) => any | void) {
