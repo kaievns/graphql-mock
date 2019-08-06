@@ -31,14 +31,14 @@
     "graphql-tools": "^4.0.5"
   },
   "devDependencies": {
-    "@apollo/react-common": "0.1.0-beta.9",
-    "@apollo/react-hooks": "0.1.0-beta.11",
+    "@apollo/react-common": "0.1.0-beta.10",
+    "@apollo/react-hooks": "0.1.0-beta.12",
     "@types/chai": "^4.1.7",
     "@types/graphql": "^14.2.3",
     "@types/jsdom": "^12.2.4",
     "@types/mocha": "^5.2.7",
     "@types/nock": "^10.0.3",
-    "@types/node": "^12.6.8",
+    "@types/node": "^12.6.9",
     "@types/react": "^16.8.23",
     "apollo-cache-inmemory": "^1.6.2",
     "apollo-client": "^2.6.3",
