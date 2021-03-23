@@ -9,6 +9,13 @@ export interface Constructor {
   variables?: any;
 }
 
+export type MockResponse = {
+  data: any;
+  error?: ApolloError;
+  loading: boolean;
+  networkStatus: 'ready' | 'error';
+};
+
 export default class Mock {
   query: string;
   variables: any;
@@ -56,7 +63,7 @@ export default class Mock {
     return this;
   }
 
-  get response() {
+  get response(): MockResponse {
     const { data, error, loading } = this.results;
     const response: any = { data, loading, networkStatus: error ? 'error' : 'ready' };
 
