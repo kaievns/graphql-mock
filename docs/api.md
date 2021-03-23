@@ -18,9 +18,14 @@ The query itself can be either a string or a `GraphQLQuery` object. You can
 either declare them anew in the tests (formatting doesn't matter) or re-use
 queries declared in your source code:
 
+Prior to `v2.0.0` query/mutation callbacks were not implemented and will not be
+fired when using `GraphqlMock` As of `v2.0.0` the `onCompleted` callback is
+implemented and will trigger automatically when using `GraphqlMock`. `onError`
+is yet to be implemented.
+
 ---
 
-`#expect(...).fail(...) used to make specific queries/mutations to fail. the
+`#expect(...).fail(...)` used to make specific queries/mutations to fail. the
 query/mutation/variables options are the same as above. The failure should be
 either a string, or an `ApolloError` instance.
 
