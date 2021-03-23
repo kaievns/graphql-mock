@@ -4,6 +4,7 @@ import Expectations from './expectations';
 import History from './history';
 import Mock from './mock';
 import Config from './config';
+import { isCompleted } from './utils';
 
 export * from './utils';
 export { Request } from './history';
@@ -26,7 +27,7 @@ export default class GraphQLMock {
     const { schema, mocks, resolvers } = this.args;
     const client = new MockClient(schema, mocks, resolvers);
 
-    client.notify(({ query, mutation, variables }: any) => {
+    client.notify(({ query, mutation, variables, onCompleted }: any) => {
       this.history.register({ query, mutation, variables });
 
       const mockResponse = this.expectations.findMockResponseFor(this.history.lastRequest);
@@ -39,6 +40,8 @@ export default class GraphQLMock {
 
         throw new Error(`Unexpected GraphQL request:\n${request.query || request.mutation}${vars}`);
       }
+
+      if (isCompleted(mockResponse) && onCompleted) onCompleted(mockResponse.data);
 
       return mockResponse;
     });
