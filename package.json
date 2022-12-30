@@ -52,7 +52,7 @@
     "husky": "^3.0.1",
     "jsdom": "^15.1.1",
     "lint-staged": "^9.2.0",
-    "mocha": "^6.2.0",
+    "mocha": "^10.2.0",
     "react": "^16.8.6",
     "react-apollo": "^2.5.8",
     "react-apollo-hooks": "^0.5.0",
